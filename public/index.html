@@ -20,6 +20,7 @@
             --bg-card: #121212;
             --bg-elevated: #181818;
             --bg-content: #0e0e0e;
+            --bg-sidebar: #0d0d0d;
             --text: #f0e8df;
             --text-dim: rgba(240,232,223,0.5);
             --text-faint: rgba(240,232,223,0.2);
@@ -27,6 +28,8 @@
             --border-gold: rgba(201,168,76,0.18);
             --green: #4ade80;
             --red: #f87171;
+            --sidebar-w: 224px;
+            --header-h: 70px;
         }
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -44,284 +47,306 @@
 
         /* ─── Header ─────────────────────────────────────────────── */
         #site-header {
-            background: var(--bg-header);
-            border-bottom: 1px solid var(--gold-border);
-            padding: 0 32px;
-            position: sticky; top: 0; z-index: 100;
-            backdrop-filter: blur(16px);
+            background: var(--bg-header); border-bottom: 1px solid var(--gold-border);
+            padding: 0 24px; position: sticky; top: 0; z-index: 200;
+            backdrop-filter: blur(16px); height: var(--header-h);
         }
         .header-inner {
-            max-width: 1400px; margin: 0 auto;
-            display: flex; align-items: center; justify-content: space-between;
-            height: 70px;
+            max-width: 100%; display: flex; align-items: center; justify-content: space-between; height: 100%;
         }
-        .brand { display: flex; align-items: center; gap: 14px; }
-        .brand-logo { height: 46px; width: auto; border-radius: 8px; object-fit: contain; display: block; }
-        .brand-logo-fallback {
-            width: 46px; height: 46px; border-radius: 10px;
-            background: var(--gold-dim); border: 1px solid var(--gold-border);
-            display: none; align-items: center; justify-content: center; font-size: 24px;
-        }
-        .brand-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 21px; font-weight: 700; line-height: 1.1;
-            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 60%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-        }
+        .brand { display: flex; align-items: center; gap: 12px; }
+        .brand-logo { height: 44px; width: auto; border-radius: 7px; object-fit: contain; display: block; }
+        .brand-logo-fallback { width: 44px; height: 44px; border-radius: 9px; background: var(--gold-dim); border: 1px solid var(--gold-border); display: none; align-items: center; justify-content: center; font-size: 22px; }
+        .brand-name { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; line-height: 1.1; background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 60%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
         .brand-sub { font-size: 10px; color: var(--text-dim); letter-spacing: 0.16em; text-transform: uppercase; margin-top: 2px; }
-        .header-right { display: flex; align-items: center; gap: 18px; }
-        .api-badge {
-            display: flex; align-items: center; gap: 7px;
-            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-            border-radius: 20px; padding: 5px 13px; font-size: 11px; font-weight: 500; color: var(--text-dim);
-        }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .api-badge { display: flex; align-items: center; gap: 7px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 20px; padding: 5px 12px; font-size: 11px; font-weight: 500; color: var(--text-dim); }
         .api-dot { width: 7px; height: 7px; border-radius: 50%; transition: background 0.4s; flex-shrink: 0; }
-        @keyframes livePulse {
-            0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.5); }
-            50%      { box-shadow: 0 0 0 5px rgba(74,222,128,0); }
-        }
+        @keyframes livePulse { 0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.5); } 50% { box-shadow: 0 0 0 5px rgba(74,222,128,0); } }
         .api-dot.live { animation: livePulse 2.2s infinite; }
         .date-label { font-size: 12px; color: var(--text-dim); }
+        /* Sidebar toggle button (mobile only) */
+        .sidebar-toggle { display: none; background: var(--gold-dim); border: 1px solid var(--gold-border); border-radius: 8px; color: var(--gold); padding: 6px 12px; font-size: 12px; font-weight: 600; }
 
         /* ─── Hero Strip ─────────────────────────────────────────── */
-        .hero-strip {
-            background: linear-gradient(135deg, rgba(201,168,76,0.07) 0%, rgba(212,97,156,0.03) 50%, transparent 100%);
-            border-bottom: 1px solid var(--gold-border); padding: 22px 32px;
-        }
-        .hero-inner {
-            max-width: 1400px; margin: 0 auto;
-            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
-        }
-        .hero-greeting {
-            font-family: 'Playfair Display', serif;
-            font-size: 22px; font-weight: 600; color: var(--text); line-height: 1.2;
-        }
+        .hero-strip { background: linear-gradient(135deg, rgba(201,168,76,0.07) 0%, rgba(212,97,156,0.03) 50%, transparent 100%); border-bottom: 1px solid var(--gold-border); padding: 20px 24px; }
+        .hero-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+        .hero-greeting { font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 600; color: var(--text); line-height: 1.2; }
         .hero-greeting .brand-accent { color: var(--gold); }
         .hero-tagline { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
-        .hero-totals { display: flex; gap: 32px; align-items: center; }
-        .hero-divider { width: 1px; height: 36px; background: var(--gold-border); }
-        .hero-stat-val { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--gold); line-height: 1; }
+        .hero-totals { display: flex; gap: 28px; align-items: center; }
+        .hero-divider { width: 1px; height: 34px; background: var(--gold-border); }
+        .hero-stat-val { font-family: 'Playfair Display', serif; font-size: 25px; font-weight: 700; color: var(--gold); line-height: 1; }
         .hero-stat-val.accent { color: var(--rose); }
         .hero-stat-lbl { font-size: 10px; color: var(--text-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px; }
 
-        /* ─── Main layout ────────────────────────────────────────── */
-        .main { max-width: 1400px; margin: 0 auto; padding: 28px 32px; }
+        /* ─── App body (sidebar + content) ───────────────────────── */
+        .app-body { display: flex; align-items: flex-start; min-height: calc(100vh - var(--header-h)); }
+
+        /* ─── Sidebar ────────────────────────────────────────────── */
+        .sidebar {
+            width: var(--sidebar-w); flex-shrink: 0;
+            background: var(--bg-sidebar); border-right: 1px solid var(--border);
+            position: sticky; top: var(--header-h);
+            height: calc(100vh - var(--header-h)); overflow-y: auto;
+            display: flex; flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+        .sidebar::-webkit-scrollbar { width: 3px; }
+        .sidebar::-webkit-scrollbar-thumb { background: #222; }
+        .sidebar-header {
+            padding: 18px 16px 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .sidebar-title { font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-faint); }
+        .sidebar-add-btn {
+            width: 26px; height: 26px; border-radius: 7px; border: 1px solid var(--gold-border);
+            background: var(--gold-dim); color: var(--gold);
+            font-size: 16px; line-height: 1; display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s; flex-shrink: 0;
+        }
+        .sidebar-add-btn:hover { background: rgba(201,168,76,0.2); }
+
+        /* Link list */
+        .sidebar-links { padding: 8px 10px; flex: 1; }
+        .sidebar-section-label { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-faint); padding: 10px 6px 4px; }
+        .sidebar-link {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 10px; border-radius: 8px; text-decoration: none;
+            color: var(--text-dim); font-size: 12px; font-weight: 500;
+            transition: all 0.15s; position: relative; group: true;
+            border: 1px solid transparent;
+        }
+        .sidebar-link:hover { background: rgba(255,255,255,0.04); color: var(--text); border-color: var(--border); }
+        .sidebar-link-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+        .sidebar-link-text { flex: 1; min-width: 0; }
+        .sidebar-link-label { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sidebar-link-desc { font-size: 10px; color: var(--text-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sidebar-link-remove {
+            width: 18px; height: 18px; border-radius: 4px; border: none;
+            background: rgba(248,113,113,0.0); color: rgba(248,113,113,0.4);
+            font-size: 14px; line-height: 1; display: none; align-items: center; justify-content: center;
+            padding: 0; flex-shrink: 0; transition: all 0.15s;
+        }
+        .sidebar-link:hover .sidebar-link-remove { display: flex; }
+        .sidebar-link-remove:hover { background: rgba(248,113,113,0.15); color: #f87171; }
+
+        /* Add link form */
+        .sidebar-add-form {
+            margin: 0 10px 10px; padding: 12px; background: var(--bg-elevated);
+            border: 1px solid var(--gold-border); border-radius: 10px;
+            display: none;
+        }
+        .sidebar-add-form.open { display: block; }
+        .add-form-title { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+
+        /* Quick-add presets */
+        .preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; margin-bottom: 10px; }
+        .preset-btn {
+            display: flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 7px;
+            border: 1px solid var(--border); background: rgba(255,255,255,0.03);
+            color: var(--text-dim); font-size: 11px; font-weight: 500; cursor: pointer;
+            transition: all 0.15s; text-align: left;
+        }
+        .preset-btn:hover { border-color: var(--gold-border); color: var(--text); background: var(--gold-dim); }
+        .preset-btn.added { border-color: rgba(74,222,128,0.3); color: #4ade80; background: rgba(74,222,128,0.06); cursor: default; }
+        .preset-icon { font-size: 14px; flex-shrink: 0; }
+        .form-divider { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+        .form-divider::before, .form-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+        .form-divider-text { font-size: 9px; color: var(--text-faint); letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; }
+        .add-field { margin-bottom: 7px; }
+        .add-field label { font-size: 9px; color: var(--text-faint); letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 3px; }
+        .add-field input {
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+            color: var(--text); border-radius: 6px; padding: 6px 9px; font-size: 12px; width: 100%;
+            transition: border-color 0.15s;
+        }
+        .add-field input:focus { outline: none; border-color: var(--gold); background: rgba(201,168,76,0.04); }
+        .add-form-row { display: flex; gap: 6px; }
+        .add-form-row .add-field { flex: 1; }
+        .add-form-actions { display: flex; gap: 6px; margin-top: 10px; }
+        .btn-add-save { flex: 1; background: linear-gradient(135deg, var(--gold-light), var(--gold)); border: none; border-radius: 7px; color: #000; padding: 7px; font-size: 11px; font-weight: 700; transition: opacity 0.15s; }
+        .btn-add-save:hover { opacity: 0.88; }
+        .btn-add-cancel { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 7px; color: var(--text-dim); padding: 7px 12px; font-size: 11px; font-weight: 600; }
+        .btn-add-cancel:hover { color: var(--text); }
+
+        /* Sidebar footer */
+        .sidebar-footer { padding: 12px 16px; border-top: 1px solid var(--border); font-size: 10px; color: var(--text-faint); line-height: 1.5; }
+
+        /* ─── Main content ────────────────────────────────────────── */
+        .main { flex: 1; min-width: 0; padding: 24px 28px; }
 
         /* ─── API notice ─────────────────────────────────────────── */
-        .api-notice {
-            background: rgba(201,168,76,0.05); border: 1px solid rgba(201,168,76,0.15);
-            border-radius: 10px; padding: 10px 16px; margin-bottom: 22px;
-            display: none; align-items: center; gap: 10px; font-size: 12px; color: var(--text-dim);
-        }
+        .api-notice { background: rgba(201,168,76,0.05); border: 1px solid rgba(201,168,76,0.15); border-radius: 10px; padding: 10px 16px; margin-bottom: 20px; display: none; align-items: center; gap: 10px; font-size: 12px; color: var(--text-dim); }
 
         /* ─── Platform cards ─────────────────────────────────────── */
-        .platform-cards { display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
-        .stat-card {
-            flex: 1; min-width: 200px;
-            background: var(--bg-card); border: 1px solid var(--border-gold);
-            border-radius: 16px; padding: 22px 24px;
-            position: relative; overflow: hidden;
-            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-        }
-        .stat-card::after {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.025) 0%, transparent 60%);
-            pointer-events: none; border-radius: 16px;
-        }
+        .platform-cards { display: flex; gap: 14px; margin-bottom: 28px; flex-wrap: wrap; }
+        .stat-card { flex: 1; min-width: 180px; background: var(--bg-card); border: 1px solid var(--border-gold); border-radius: 16px; padding: 20px 22px; position: relative; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease; }
+        .stat-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.025) 0%, transparent 60%); pointer-events: none; border-radius: 16px; }
         .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
-        .card-glow { position: absolute; top: -40px; right: -40px; width: 140px; height: 140px; border-radius: 50%; pointer-events: none; opacity: 0.07; }
+        .card-glow { position: absolute; top: -40px; right: -40px; width: 130px; height: 130px; border-radius: 50%; pointer-events: none; opacity: 0.07; }
         .card-top-bar { position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 16px 16px 0 0; }
-        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-        .card-platform { display: flex; align-items: center; gap: 11px; }
-        .platform-badge { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .card-platform { display: flex; align-items: center; gap: 10px; }
+        .platform-badge { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .platform-badge svg { display: block; }
-        .platform-name { font-size: 13px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
-        .analytics-link {
-            font-size: 10px; color: var(--gold); text-decoration: none;
-            letter-spacing: 0.1em; text-transform: uppercase;
-            background: var(--gold-dim); border: 1px solid transparent;
-            padding: 4px 10px; border-radius: 12px; transition: all 0.2s; opacity: 0.75;
-        }
+        .platform-name { font-size: 12px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+        .analytics-link { font-size: 10px; color: var(--gold); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; background: var(--gold-dim); border: 1px solid transparent; padding: 3px 9px; border-radius: 11px; transition: all 0.2s; opacity: 0.75; }
         .analytics-link:hover { opacity: 1; border-color: var(--gold-border); }
-        .metric-row { margin-bottom: 13px; }
-        .metric-label-sm { font-size: 10px; color: rgba(240,232,223,0.32); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 5px; }
-        .follower-row { display: flex; align-items: baseline; gap: 10px; }
-        .follower-value {
-            font-family: 'Playfair Display', serif;
-            font-size: 34px; font-weight: 700; color: #fff; cursor: pointer;
-            transition: color 0.15s; line-height: 1;
-        }
+        .metric-row { margin-bottom: 12px; }
+        .metric-label-sm { font-size: 10px; color: rgba(240,232,223,0.32); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 4px; }
+        .follower-row { display: flex; align-items: baseline; gap: 9px; }
+        .follower-value { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; color: #fff; cursor: pointer; transition: color 0.15s; line-height: 1; }
         .follower-value:hover { color: var(--gold); }
         .follower-change { font-size: 12px; font-weight: 600; }
-        .reach-value { font-size: 16px; font-weight: 600; color: rgba(240,232,223,0.6); cursor: pointer; transition: color 0.15s; }
+        .reach-value { font-size: 15px; font-weight: 600; color: rgba(240,232,223,0.6); cursor: pointer; transition: color 0.15s; }
         .reach-value:hover { color: var(--gold); }
-        .card-updated { font-size: 9px; color: rgba(240,232,223,0.18); margin-top: 13px; letter-spacing: 0.07em; }
+        .card-updated { font-size: 9px; color: rgba(240,232,223,0.18); margin-top: 12px; letter-spacing: 0.06em; }
         .inline-edit { display: none; gap: 7px; }
         .inline-edit.active { display: flex; }
-        .inline-edit input {
-            background: rgba(255,255,255,0.06); border: 1px solid var(--gold); border-radius: 7px;
-            color: #fff; padding: 5px 10px; font-size: 22px; width: 120px; font-weight: 700;
-        }
-        .inline-edit button { background: var(--gold); border: none; border-radius: 7px; color: #000; padding: 0 12px; font-size: 12px; font-weight: 700; }
+        .inline-edit input { background: rgba(255,255,255,0.06); border: 1px solid var(--gold); border-radius: 7px; color: #fff; padding: 5px 9px; font-size: 20px; width: 110px; font-weight: 700; }
+        .inline-edit button { background: var(--gold); border: none; border-radius: 7px; color: #000; padding: 0 10px; font-size: 11px; font-weight: 700; }
 
         /* ─── Tabs ───────────────────────────────────────────────── */
-        .tab-bar {
-            display: flex; gap: 5px; margin-bottom: 22px;
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 14px; padding: 5px;
-        }
-        .tab-btn {
-            background: none; border: none; border-radius: 10px;
-            padding: 9px 18px; font-size: 13px; font-weight: 600;
-            color: var(--text-dim); transition: all 0.2s; flex: 1; white-space: nowrap;
-        }
+        .tab-bar { display: flex; gap: 5px; margin-bottom: 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 13px; padding: 5px; }
+        .tab-btn { background: none; border: none; border-radius: 9px; padding: 8px 16px; font-size: 12px; font-weight: 600; color: var(--text-dim); transition: all 0.2s; flex: 1; white-space: nowrap; }
         .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.04); }
-        .tab-btn.active {
-            color: #000 !important;
-            background: linear-gradient(135deg, var(--gold-light), var(--gold));
-            box-shadow: 0 2px 14px rgba(201,168,76,0.28);
-        }
+        .tab-btn.active { color: #000 !important; background: linear-gradient(135deg, var(--gold-light), var(--gold)); box-shadow: 0 2px 12px rgba(201,168,76,0.28); }
 
         /* ─── Tab panels ─────────────────────────────────────────── */
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }
-        .panel-box { background: var(--bg-content); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
-        .panel-title { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; color: var(--gold); margin-bottom: 20px; }
+        .panel-box { background: var(--bg-content); border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
+        .panel-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--gold); margin-bottom: 18px; }
 
         /* ─── Calendar ───────────────────────────────────────────── */
-        .calendar-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-        .cal-nav { display: flex; gap: 8px; align-items: center; }
-        .cal-nav button { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text-dim); border-radius: 8px; padding: 6px 14px; font-size: 12px; transition: all 0.15s; }
+        .calendar-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+        .cal-nav { display: flex; gap: 7px; align-items: center; }
+        .cal-nav button { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text-dim); border-radius: 7px; padding: 5px 12px; font-size: 12px; transition: all 0.15s; }
         .cal-nav button:hover { border-color: var(--gold-border); color: var(--text); }
         .cal-nav .today-btn { background: var(--gold-dim); border-color: var(--gold-border); color: var(--gold); }
-        .week-label { font-size: 12px; color: var(--text-dim); min-width: 80px; text-align: center; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
-        .cal-day { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 11px; padding: 12px; min-height: 185px; transition: border-color 0.2s; }
+        .week-label { font-size: 12px; color: var(--text-dim); min-width: 76px; text-align: center; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+        .cal-day { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 10px; min-height: 178px; transition: border-color 0.2s; }
         .cal-day:hover { border-color: rgba(255,255,255,0.1); }
-        .cal-day.today { background: rgba(201,168,76,0.06); border-color: var(--gold-border); box-shadow: 0 0 24px rgba(201,168,76,0.06); }
-        .cal-day-name { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(240,232,223,0.28); margin-bottom: 2px; }
+        .cal-day.today { background: rgba(201,168,76,0.06); border-color: var(--gold-border); box-shadow: 0 0 20px rgba(201,168,76,0.06); }
+        .cal-day-name { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(240,232,223,0.28); margin-bottom: 2px; }
         .cal-day.today .cal-day-name { color: var(--gold); }
-        .cal-date { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: #ccc; margin-bottom: 10px; }
+        .cal-date { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: #ccc; margin-bottom: 8px; }
         .cal-day.today .cal-date { color: var(--gold); }
         .cal-day.past .cal-date { color: #363636; }
-        .cal-post { display: flex; align-items: flex-start; gap: 6px; cursor: pointer; margin-bottom: 6px; }
+        .cal-post { display: flex; align-items: flex-start; gap: 5px; cursor: pointer; margin-bottom: 5px; }
         .cal-post.done { opacity: 0.35; }
-        .post-check { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; color: #000; }
+        .post-check { width: 13px; height: 13px; border-radius: 3px; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; color: #000; }
         .post-platform-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 1px; }
-        .post-text { font-size: 10px; color: rgba(240,232,223,0.58); line-height: 1.35; }
-        .post-text.done { color: #404040; }
-        .rest-day { font-size: 10px; color: #2a2a2a; font-style: italic; }
-        .cal-legend { margin-top: 14px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
-        .legend-item { display: flex; align-items: center; gap: 6px; }
-        .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
-        .legend-text { font-size: 10px; color: rgba(240,232,223,0.38); }
-        .legend-hint { font-size: 10px; color: rgba(240,232,223,0.22); margin-left: auto; font-style: italic; }
+        .post-text { font-size: 10px; color: rgba(240,232,223,0.55); line-height: 1.3; }
+        .post-text.done { color: #3a3a3a; }
+        .rest-day { font-size: 10px; color: #282828; font-style: italic; }
+        .cal-legend { margin-top: 12px; display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .legend-dot { width: 9px; height: 9px; border-radius: 3px; }
+        .legend-text { font-size: 10px; color: rgba(240,232,223,0.36); }
+        .legend-hint { font-size: 10px; color: rgba(240,232,223,0.2); margin-left: auto; font-style: italic; }
 
         /* ─── Metrics Log ────────────────────────────────────────── */
-        .metrics-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-        .btn-gold {
-            background: linear-gradient(135deg, var(--gold-light), var(--gold));
-            border: none; border-radius: 9px; color: #000;
-            padding: 9px 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
-            box-shadow: 0 2px 14px rgba(201,168,76,0.22); transition: opacity 0.2s, transform 0.15s;
-        }
+        .metrics-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .btn-gold { background: linear-gradient(135deg, var(--gold-light), var(--gold)); border: none; border-radius: 9px; color: #000; padding: 8px 18px; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; box-shadow: 0 2px 12px rgba(201,168,76,0.2); transition: opacity 0.2s, transform 0.15s; }
         .btn-gold:hover { opacity: 0.9; transform: translateY(-1px); }
-        .btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 9px; color: var(--text-dim); padding: 9px 20px; font-size: 12px; font-weight: 600; transition: all 0.15s; }
-        .btn-ghost:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
-        .log-form { background: var(--bg-elevated); border: 1px solid var(--gold-border); border-radius: 12px; padding: 22px; margin-bottom: 22px; display: none; }
+        .btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 9px; color: var(--text-dim); padding: 8px 18px; font-size: 12px; font-weight: 600; transition: all 0.15s; }
+        .btn-ghost:hover { border-color: rgba(255,255,255,0.14); color: var(--text); }
+        .log-form { background: var(--bg-elevated); border: 1px solid var(--gold-border); border-radius: 12px; padding: 20px; margin-bottom: 20px; display: none; }
         .log-form.visible { display: block; }
-        .form-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
-        .form-field label { font-size: 10px; color: rgba(240,232,223,0.38); letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 5px; }
-        .form-field input, .form-field textarea { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: var(--text); border-radius: 8px; padding: 8px 12px; font-size: 13px; width: 100%; transition: border-color 0.15s; }
+        .form-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+        .form-field label { font-size: 10px; color: rgba(240,232,223,0.38); letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 4px; }
+        .form-field input, .form-field textarea { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: var(--text); border-radius: 7px; padding: 7px 10px; font-size: 13px; width: 100%; transition: border-color 0.15s; }
         .form-field input:focus, .form-field textarea:focus { outline: none; border-color: var(--gold); background: rgba(201,168,76,0.04); }
-        .form-notes { margin-bottom: 14px; }
+        .form-notes { margin-bottom: 12px; }
         .form-notes textarea { resize: vertical; }
-        .empty-state { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 52px 36px; text-align: center; }
-        .empty-state-icon { font-size: 40px; margin-bottom: 14px; opacity: 0.35; }
+        .empty-state { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 48px 32px; text-align: center; }
+        .empty-state-icon { font-size: 38px; margin-bottom: 12px; opacity: 0.35; }
         .empty-state-text { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
         .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
         .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
-        .data-table thead th { padding: 10px 14px; text-align: left; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); font-weight: 700; background: rgba(201,168,76,0.05); border-bottom: 1px solid rgba(201,168,76,0.14); }
+        .data-table thead th { padding: 9px 12px; text-align: left; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); font-weight: 700; background: rgba(201,168,76,0.05); border-bottom: 1px solid rgba(201,168,76,0.13); }
         .data-table thead th.num { text-align: right; }
-        .data-table tbody td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .data-table tbody td { padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,0.03); }
         .data-table tbody td.num { text-align: right; color: rgba(240,232,223,0.6); }
         .data-table tbody tr:last-child td { border-bottom: none; }
         .data-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
 
         /* ─── Growth chart ───────────────────────────────────────── */
-        .chart-toggles { display: flex; gap: 8px; flex-wrap: wrap; }
-        .toggle-btn { display: flex; align-items: center; gap: 6px; border-radius: 20px; padding: 5px 14px; font-size: 11px; font-weight: 600; border: 1px solid; transition: all 0.15s; }
-        .toggle-dot { width: 8px; height: 8px; border-radius: 50%; }
-        .chart-wrap { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 22px 18px 14px; margin-bottom: 22px; }
+        .chart-toggles { display: flex; gap: 7px; flex-wrap: wrap; }
+        .toggle-btn { display: flex; align-items: center; gap: 5px; border-radius: 18px; padding: 4px 12px; font-size: 11px; font-weight: 600; border: 1px solid; transition: all 0.15s; }
+        .toggle-dot { width: 7px; height: 7px; border-radius: 50%; }
+        .chart-wrap { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 11px; padding: 20px 16px 12px; margin-bottom: 20px; }
         .chart-wrap svg { width: 100%; height: auto; display: block; }
-        .growth-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
-        .growth-card { background: var(--bg-elevated); border-radius: 10px; padding: 16px 18px; border: 1px solid transparent; transition: border-color 0.2s; }
-        .growth-card:hover { border-color: rgba(201,168,76,0.14); }
-        .growth-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-        .growth-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .growth-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 22px; }
+        .growth-card { background: var(--bg-elevated); border-radius: 9px; padding: 14px 16px; border: 1px solid transparent; transition: border-color 0.2s; }
+        .growth-card:hover { border-color: rgba(201,168,76,0.13); }
+        .growth-card-head { display: flex; align-items: center; gap: 7px; margin-bottom: 9px; }
+        .growth-dot { width: 7px; height: 7px; border-radius: 50%; }
         .growth-platform { font-size: 11px; color: var(--text-dim); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
-        .growth-followers { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+        .growth-followers { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 2px; }
         .growth-delta { font-size: 12px; font-weight: 600; }
-        .growth-weeks { font-size: 10px; color: rgba(240,232,223,0.2); margin-top: 3px; }
-        .chart-empty { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 56px; text-align: center; }
-        .chart-empty .icon { font-size: 40px; margin-bottom: 14px; opacity: 0.28; }
-        .chart-empty .title { font-weight: 600; color: rgba(240,232,223,0.38); margin-bottom: 8px; font-size: 15px; }
-        .chart-empty p { font-size: 13px; color: rgba(240,232,223,0.22); }
+        .growth-weeks { font-size: 10px; color: rgba(240,232,223,0.2); margin-top: 2px; }
+        .chart-empty { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 11px; padding: 50px; text-align: center; }
+        .chart-empty .icon { font-size: 38px; margin-bottom: 12px; opacity: 0.28; }
+        .chart-empty .title { font-weight: 600; color: rgba(240,232,223,0.36); margin-bottom: 7px; font-size: 14px; }
+        .chart-empty p { font-size: 13px; color: rgba(240,232,223,0.2); }
 
         /* ─── Content Ideas ──────────────────────────────────────── */
-        .ideas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
-        .idea-category { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
-        .idea-cat-title { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
-        .idea-cat-title::before { content: ''; display: block; width: 3px; height: 12px; background: var(--gold); border-radius: 2px; flex-shrink: 0; }
-        .idea-item { font-size: 12px; color: rgba(240,232,223,0.58); padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 8px; transition: color 0.15s; }
+        .ideas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .idea-category { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+        .idea-cat-title { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .idea-cat-title::before { content: ''; display: block; width: 3px; height: 11px; background: var(--gold); border-radius: 2px; flex-shrink: 0; }
+        .idea-item { font-size: 12px; color: rgba(240,232,223,0.56); padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 8px; transition: color 0.15s; }
         .idea-item:last-child { border-bottom: none; }
         .idea-item:hover { color: var(--text); }
-        .copy-hint { font-size: 9px; color: rgba(201,168,76,0.32); flex-shrink: 0; }
+        .copy-hint { font-size: 9px; color: rgba(201,168,76,0.3); flex-shrink: 0; }
         .copy-hint.copied { color: var(--green); }
-        .hashtag-section { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
-        .hashtag-title { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
-        .hashtag-title::before { content: ''; display: block; width: 3px; height: 12px; background: var(--gold); border-radius: 2px; flex-shrink: 0; }
-        .hashtag-row { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 9px 12px; border-radius: 8px; border: 1px solid transparent; margin-bottom: 6px; transition: all 0.15s; background: rgba(255,255,255,0.02); }
-        .hashtag-row:hover { background: rgba(201,168,76,0.06); border-color: rgba(201,168,76,0.15); }
-        .hashtag-row.copied { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.25); }
-        .hashtag-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(201,168,76,0.65); width: 60px; flex-shrink: 0; }
-        .hashtag-tags { font-size: 12px; color: rgba(240,232,223,0.52); flex: 1; }
-        .hashtag-copy { font-size: 10px; color: rgba(201,168,76,0.32); flex-shrink: 0; }
+        .hashtag-section { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+        .hashtag-title { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .hashtag-title::before { content: ''; display: block; width: 3px; height: 11px; background: var(--gold); border-radius: 2px; flex-shrink: 0; }
+        .hashtag-row { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px 10px; border-radius: 7px; border: 1px solid transparent; margin-bottom: 5px; transition: all 0.15s; background: rgba(255,255,255,0.02); }
+        .hashtag-row:hover { background: rgba(201,168,76,0.06); border-color: rgba(201,168,76,0.14); }
+        .hashtag-row.copied { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.24); }
+        .hashtag-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(201,168,76,0.6); width: 56px; flex-shrink: 0; }
+        .hashtag-tags { font-size: 12px; color: rgba(240,232,223,0.5); flex: 1; }
+        .hashtag-copy { font-size: 10px; color: rgba(201,168,76,0.3); flex-shrink: 0; }
         .hashtag-copy.copied { color: var(--green); }
 
-        /* ─── Quick Links ────────────────────────────────────────── */
-        .links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-        .quick-link { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; text-decoration: none; display: flex; align-items: center; gap: 14px; transition: all 0.22s; }
-        .quick-link:hover { background: rgba(255,255,255,0.025); transform: translateY(-2px); }
-        .link-icon { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .link-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-        .link-desc { font-size: 11px; color: rgba(240,232,223,0.36); }
-        .link-arrow { margin-left: auto; font-size: 15px; color: rgba(240,232,223,0.18); flex-shrink: 0; }
-
         /* ─── Footer ─────────────────────────────────────────────── */
-        .site-footer { margin-top: 28px; text-align: center; padding-bottom: 28px; font-size: 11px; color: rgba(240,232,223,0.18); }
-        .site-footer a { color: rgba(201,168,76,0.4); text-decoration: none; }
+        .site-footer { margin-top: 24px; text-align: center; padding-bottom: 24px; font-size: 11px; color: rgba(240,232,223,0.16); }
+        .site-footer a { color: rgba(201,168,76,0.38); text-decoration: none; }
         .site-footer a:hover { color: var(--gold); }
-        .site-footer strong { color: rgba(240,232,223,0.3); }
+        .site-footer strong { color: rgba(240,232,223,0.28); }
 
         /* ─── Responsive ─────────────────────────────────────────── */
-        @media (max-width: 1100px) { .ideas-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 900px) {
-            .platform-cards { flex-direction: column; }
-            .calendar-grid { grid-template-columns: repeat(4, 1fr); }
-            .growth-summary, .links-grid { grid-template-columns: repeat(2, 1fr); }
+        @media (max-width: 1000px) {
+            .ideas-grid { grid-template-columns: repeat(2, 1fr); }
             .form-grid { grid-template-columns: repeat(2, 1fr); }
-            .hero-inner { flex-direction: column; align-items: flex-start; }
-            .hero-totals { gap: 20px; }
         }
-        @media (max-width: 600px) {
-            #site-header { padding: 0 16px; }
-            .hero-strip { padding: 16px; }
+        @media (max-width: 820px) {
+            :root { --sidebar-w: 200px; }
+            .calendar-grid { grid-template-columns: repeat(4, 1fr); }
+            .growth-summary { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 680px) {
+            .sidebar-toggle { display: flex; align-items: center; gap: 6px; }
+            .sidebar {
+                position: fixed; top: var(--header-h); left: 0; z-index: 150;
+                transform: translateX(-100%); box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+            }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 140; }
+            .sidebar-overlay.open { display: block; }
             .main { padding: 16px; }
+            .hero-inner { flex-direction: column; align-items: flex-start; }
             .calendar-grid { grid-template-columns: repeat(2, 1fr); }
-            .ideas-grid, .growth-summary, .links-grid, .form-grid { grid-template-columns: 1fr; }
-            .tab-btn { padding: 8px 8px; font-size: 11px; }
-            .panel-box { padding: 18px; }
+            .ideas-grid, .growth-summary, .form-grid { grid-template-columns: 1fr; }
+            .tab-btn { padding: 7px 7px; font-size: 11px; }
+            .panel-box { padding: 16px; }
         }
     </style>
 </head>
@@ -331,6 +356,7 @@
 <header id="site-header">
     <div class="header-inner">
         <div class="brand">
+            <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰ Links</button>
             <img src="https://pub-ba8be99ab92a493c8f41012c737905d5.r2.dev/dancescapes%20logo.jpg"
                  alt="Dancescapes" class="brand-logo"
                  onerror="this.style.display='none';document.querySelector('.brand-logo-fallback').style.display='flex'">
@@ -371,97 +397,149 @@
     </div>
 </div>
 
-<!-- ═══════════════════ MAIN ════════════════════ -->
-<div class="main">
+<!-- Mobile overlay -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
 
-    <div class="api-notice" id="api-notice">
-        ℹ️ &nbsp;Metrics API not reachable — showing locally saved data. Click any follower count to update manually.
-    </div>
+<!-- ═══════════════════ APP BODY ═══════════════════ -->
+<div class="app-body">
 
-    <div class="platform-cards" id="platform-cards"></div>
+    <!-- ── Left Sidebar ── -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-title">Quick Links</span>
+            <button class="sidebar-add-btn" id="sidebar-add-btn" title="Add a link">+</button>
+        </div>
 
-    <div class="tab-bar">
-        <button class="tab-btn active" data-tab="calendar">📅 This Week</button>
-        <button class="tab-btn" data-tab="metrics">📊 Metrics Log</button>
-        <button class="tab-btn" data-tab="growth">📈 Growth</button>
-        <button class="tab-btn" data-tab="ideas">💡 Content Ideas</button>
-        <button class="tab-btn" data-tab="links">🔗 Quick Links</button>
-    </div>
+        <!-- Add link form -->
+        <div class="sidebar-add-form" id="sidebar-add-form">
+            <div class="add-form-title">Add a Link</div>
 
-    <div class="tab-panel active" id="panel-calendar">
-        <div class="panel-box">
-            <div class="calendar-toolbar">
-                <div class="panel-title" style="margin-bottom:0">Weekly Content Calendar</div>
-                <div class="cal-nav">
-                    <button id="cal-prev">← Prev</button>
-                    <span class="week-label" id="week-label">This Week</span>
-                    <button id="cal-next">Next →</button>
-                    <button class="today-btn" id="cal-today" style="display:none">Today</button>
+            <!-- Preset quick-add buttons -->
+            <div class="preset-grid" id="preset-grid"></div>
+
+            <div class="form-divider"><span class="form-divider-text">or custom</span></div>
+
+            <div class="add-form-row">
+                <div class="add-field">
+                    <label>Icon</label>
+                    <input type="text" id="add-icon" placeholder="🔗" maxlength="4" style="text-align:center;font-size:18px">
+                </div>
+                <div class="add-field" style="flex:3">
+                    <label>Name</label>
+                    <input type="text" id="add-name" placeholder="e.g. Google Drive">
                 </div>
             </div>
-            <div class="calendar-grid" id="calendar-grid"></div>
-            <div class="cal-legend" id="cal-legend"></div>
-        </div>
-    </div>
-
-    <div class="tab-panel" id="panel-metrics">
-        <div class="panel-box">
-            <div class="metrics-toolbar">
-                <div class="panel-title" style="margin-bottom:0">Weekly Metrics Log</div>
-                <button class="btn-gold" id="toggle-log-form">+ Log This Week</button>
+            <div class="add-field">
+                <label>URL</label>
+                <input type="url" id="add-url" placeholder="https://">
             </div>
-            <div class="log-form" id="log-form">
-                <div class="form-grid">
-                    <div class="form-field"><label>Week of</label><input type="date" id="f-week"></div>
-                    <div class="form-field"><label>FB Followers</label><input type="number" placeholder="0" id="f-fb-f"></div>
-                    <div class="form-field"><label>FB Reach</label><input type="number" placeholder="0" id="f-fb-r"></div>
-                    <div class="form-field"><label>IG Followers</label><input type="number" placeholder="0" id="f-ig-f"></div>
-                    <div class="form-field"><label>IG Reach</label><input type="number" placeholder="0" id="f-ig-r"></div>
-                    <div class="form-field"><label>TikTok Followers</label><input type="number" placeholder="0" id="f-tt-f"></div>
-                    <div class="form-field"><label>TikTok Views</label><input type="number" placeholder="0" id="f-tt-v"></div>
-                    <div class="form-field"><label>New Google Reviews</label><input type="number" placeholder="0" id="f-reviews"></div>
+            <div class="add-field">
+                <label>Description (optional)</label>
+                <input type="text" id="add-desc" placeholder="e.g. Shared drive for content">
+            </div>
+            <div class="add-form-actions">
+                <button class="btn-add-save" id="add-save-btn">Save Link</button>
+                <button class="btn-add-cancel" id="add-cancel-btn">Cancel</button>
+            </div>
+        </div>
+
+        <!-- Link list -->
+        <div class="sidebar-links" id="sidebar-links"></div>
+
+        <div class="sidebar-footer">
+            Click <strong style="color:var(--gold)">+</strong> to add Google Drive, OneDrive, or any custom link.<br>
+            Hover a link to remove it.
+        </div>
+    </aside>
+
+    <!-- ── Main Content ── -->
+    <div class="main">
+
+        <div class="api-notice" id="api-notice">
+            ℹ️ &nbsp;Metrics API not reachable — showing locally saved data. Click any follower count to update manually.
+        </div>
+
+        <div class="platform-cards" id="platform-cards"></div>
+
+        <div class="tab-bar">
+            <button class="tab-btn active" data-tab="calendar">📅 This Week</button>
+            <button class="tab-btn" data-tab="metrics">📊 Metrics Log</button>
+            <button class="tab-btn" data-tab="growth">📈 Growth</button>
+            <button class="tab-btn" data-tab="ideas">💡 Content Ideas</button>
+        </div>
+
+        <div class="tab-panel active" id="panel-calendar">
+            <div class="panel-box">
+                <div class="calendar-toolbar">
+                    <div class="panel-title" style="margin-bottom:0">Weekly Content Calendar</div>
+                    <div class="cal-nav">
+                        <button id="cal-prev">← Prev</button>
+                        <span class="week-label" id="week-label">This Week</span>
+                        <button id="cal-next">Next →</button>
+                        <button class="today-btn" id="cal-today" style="display:none">Today</button>
+                    </div>
                 </div>
-                <div class="form-notes form-field">
-                    <label>Notes / Top Performing Post</label>
-                    <textarea id="f-notes" rows="2" placeholder="e.g. Recital reel got 450 views, posted Friday 6pm…"></textarea>
+                <div class="calendar-grid" id="calendar-grid"></div>
+                <div class="cal-legend" id="cal-legend"></div>
+            </div>
+        </div>
+
+        <div class="tab-panel" id="panel-metrics">
+            <div class="panel-box">
+                <div class="metrics-toolbar">
+                    <div class="panel-title" style="margin-bottom:0">Weekly Metrics Log</div>
+                    <button class="btn-gold" id="toggle-log-form">+ Log This Week</button>
                 </div>
-                <button class="btn-gold" id="save-log-entry">Save Entry</button>
+                <div class="log-form" id="log-form">
+                    <div class="form-grid">
+                        <div class="form-field"><label>Week of</label><input type="date" id="f-week"></div>
+                        <div class="form-field"><label>FB Followers</label><input type="number" placeholder="0" id="f-fb-f"></div>
+                        <div class="form-field"><label>FB Reach</label><input type="number" placeholder="0" id="f-fb-r"></div>
+                        <div class="form-field"><label>IG Followers</label><input type="number" placeholder="0" id="f-ig-f"></div>
+                        <div class="form-field"><label>IG Reach</label><input type="number" placeholder="0" id="f-ig-r"></div>
+                        <div class="form-field"><label>TikTok Followers</label><input type="number" placeholder="0" id="f-tt-f"></div>
+                        <div class="form-field"><label>TikTok Views</label><input type="number" placeholder="0" id="f-tt-v"></div>
+                        <div class="form-field"><label>New Google Reviews</label><input type="number" placeholder="0" id="f-reviews"></div>
+                    </div>
+                    <div class="form-notes form-field">
+                        <label>Notes / Top Performing Post</label>
+                        <textarea id="f-notes" rows="2" placeholder="e.g. Recital reel got 450 views, posted Friday 6pm…"></textarea>
+                    </div>
+                    <button class="btn-gold" id="save-log-entry">Save Entry</button>
+                </div>
+                <div id="metrics-table-wrap"></div>
             </div>
-            <div id="metrics-table-wrap"></div>
         </div>
-    </div>
 
-    <div class="tab-panel" id="panel-growth">
-        <div class="panel-box" id="growth-panel-content"></div>
-    </div>
+        <div class="tab-panel" id="panel-growth">
+            <div class="panel-box" id="growth-panel-content"></div>
+        </div>
 
-    <div class="tab-panel" id="panel-ideas">
-        <div class="panel-box">
-            <div class="panel-title">Content Ideas &amp; Hashtags</div>
-            <div class="ideas-grid" id="ideas-grid"></div>
-            <div class="hashtag-section">
-                <div class="hashtag-title">Hashtag Sets — Click to Copy</div>
-                <div id="hashtag-rows"></div>
+        <div class="tab-panel" id="panel-ideas">
+            <div class="panel-box">
+                <div class="panel-title">Content Ideas &amp; Hashtags</div>
+                <div class="ideas-grid" id="ideas-grid"></div>
+                <div class="hashtag-section">
+                    <div class="hashtag-title">Hashtag Sets — Click to Copy</div>
+                    <div id="hashtag-rows"></div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="tab-panel" id="panel-links">
-        <div class="panel-box">
-            <div class="panel-title">Quick Links</div>
-            <div class="links-grid" id="links-grid"></div>
+        <div class="site-footer">
+            <strong>Dancescapes Performing Arts LLC</strong> · Endicott, NY ·
+            Powered by <a href="https://myautomationpartner.com" target="_blank">My Automation Partner</a> ·
+            All data saved locally in your browser
         </div>
-    </div>
-
-    <div class="site-footer">
-        <strong>Dancescapes Performing Arts LLC</strong> · Endicott, NY ·
-        Powered by <a href="https://myautomationpartner.com" target="_blank">My Automation Partner</a> ·
-        All data saved locally in your browser
-    </div>
-</div>
+    </div><!-- /main -->
+</div><!-- /app-body -->
 
 <script>
+/* ═══════════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════════ */
 const GOLD = '#c9a84c';
+
 const PLATFORMS = [
     { id: 'facebook',  name: 'Facebook',  color: '#1877F2', analyticsUrl: 'https://www.facebook.com/dancescapesperformingarts/insights',
       svgPath: 'M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z' },
@@ -472,7 +550,9 @@ const PLATFORMS = [
     { id: 'google',    name: 'Google',    color: '#34A853', analyticsUrl: 'https://business.google.com/',
       svgPath: 'M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm.25 4.5a7.45 7.45 0 0 1 5.27 2.17l-2.14 2.14a4.5 4.5 0 1 0 .52 6.25h-3.65v-3h6.75c.08.44.12.89.12 1.35A7.5 7.5 0 1 1 12.25 4.5z' },
 ];
+
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
 const CALENDAR_DATA = {
     Monday:    { facebook: 'Studio tip or dance fact',              instagram: 'Reel: behind-the-scenes warm-up',     tiktok: 'Trending sound + dancers in class',       google: '' },
     Tuesday:   { facebook: 'Class spotlight photo',                 instagram: '',                                    tiktok: '',                                        google: '' },
@@ -482,6 +562,7 @@ const CALENDAR_DATA = {
     Saturday:  { facebook: 'Weekend recap or student shoutout',     instagram: '',                                    tiktok: '',                                        google: '' },
     Sunday:    { facebook: '',                                       instagram: 'Story: Sunday motivation quote',      tiktok: 'Fun challenge or duet',                   google: '' },
 };
+
 const CONTENT_IDEAS = [
     { cat: 'Behind the Scenes',  ideas: ['Studio tour walk-through (Reel/TikTok)','Costume reveal day','Recital rehearsal chaos','Teacher warm-up routine','Morning class setup'] },
     { cat: 'Students & Families',ideas: ['First day vs. end of year comparison','Student of the month spotlight','"Why I dance" short interviews','Sibling pairs in class','Parent reaction at recital'] },
@@ -489,6 +570,7 @@ const CONTENT_IDEAS = [
     { cat: 'Seasonal & Events',  ideas: ['Back-to-school registration reminder','Holiday performance teasers','Recital countdown posts','Summer intensive announcement','Year-end thank-you post'] },
     { cat: 'Engagement',         ideas: ['"Which style should YOUR child try?" quiz','Guess the style video','Fill-in-the-blank: My fav thing about dance is ___','Share a 5-star Google review as a graphic','Caption contest on a funny recital photo'] },
 ];
+
 const HASHTAGS = {
     local:   '#endicottny #binghamtonny #southerntierny #triplecitieskids #upstateny',
     dance:   '#dancestudio #danceclass #dancekids #dancelife #danceteacher',
@@ -496,26 +578,51 @@ const HASHTAGS = {
     parents: '#dancemom #kidsactivities #kidsDANCE #dancerecital #recital',
     studio:  '#dancescapes #dancescapesperformingarts #endicottDANCE',
 };
-const QUICK_LINKS = [
-    { label: 'Metricool Dashboard',  url: 'https://app.metricool.com/',     desc: 'Analytics for all platforms',      color: '#6366f1', icon: '📊' },
-    { label: 'Meta Business Suite',  url: 'https://business.facebook.com/', desc: 'FB + IG scheduling & inbox',       color: '#1877F2', icon: '📘' },
-    { label: 'Google Business',      url: 'https://business.google.com/',   desc: 'Reviews & profile management',     color: '#34A853', icon: '⭐' },
-    { label: 'TikTok Studio',        url: 'https://www.tiktok.com/tiktokstudio', desc: 'TikTok analytics & scheduling', color: '#ffffff', icon: '🎵' },
-    { label: 'Dancescapes Website',  url: 'https://www.dancescapes.com',    desc: 'Your live website',                color: GOLD,      icon: '🌐' },
-    { label: 'Jackrabbit Portal',    url: 'https://app.jackrabbitclass.com/jr4.0/ParentPortal/Login?orgID=550308', desc: 'Class management & parent portal', color: '#e67e22', icon: '🐇' },
-    { label: 'Dancescapes Email',    url: 'https://outlook.office.com/mail/', desc: 'info@dancescapes.com inbox',     color: '#0078D4', icon: '✉️' },
-    { label: 'My Automation Partner',url: 'https://myautomationpartner.com', desc: 'Your automation dashboard',      color: GOLD,      icon: '⚡' },
+
+/* Default links (stored in localStorage, user can add/remove) */
+const DEFAULT_LINKS = [
+    { id: 'metricool',  icon: '📊', label: 'Metricool',        desc: 'Analytics dashboard',           url: 'https://app.metricool.com/',     section: 'Analytics', builtin: true },
+    { id: 'meta',       icon: '📘', label: 'Meta Business',    desc: 'FB + IG scheduling',            url: 'https://business.facebook.com/', section: 'Analytics', builtin: true },
+    { id: 'tiktokst',   icon: '🎵', label: 'TikTok Studio',    desc: 'TikTok analytics',              url: 'https://www.tiktok.com/tiktokstudio', section: 'Analytics', builtin: true },
+    { id: 'googlebiz',  icon: '⭐', label: 'Google Business',  desc: 'Reviews & profile',             url: 'https://business.google.com/',   section: 'Analytics', builtin: true },
+    { id: 'website',    icon: '🌐', label: 'Dancescapes.com',  desc: 'Your live website',             url: 'https://www.dancescapes.com',    section: 'Studio', builtin: true },
+    { id: 'jackrabbit', icon: '🐇', label: 'Jackrabbit',       desc: 'Class management',              url: 'https://app.jackrabbitclass.com/jr4.0/ParentPortal/Login?orgID=550308', section: 'Studio', builtin: true },
+    { id: 'email',      icon: '✉️', label: 'Email Inbox',      desc: 'info@dancescapes.com',          url: 'https://outlook.office.com/mail/', section: 'Studio', builtin: true },
+    { id: 'map',        icon: '⚡', label: 'Automation Partner',desc: 'Your automation hub',          url: 'https://myautomationpartner.com', section: 'Studio', builtin: true },
 ];
 
+/* Preset links users can add with one click */
+const PRESETS = [
+    { id: 'gdrive',   icon: '📁', label: 'Google Drive',  desc: 'Shared files & docs',      url: 'https://drive.google.com/', section: 'Files' },
+    { id: 'gsheets',  icon: '📗', label: 'Google Sheets', desc: 'Spreadsheets',             url: 'https://sheets.google.com/', section: 'Files' },
+    { id: 'onedrive', icon: '☁️', label: 'OneDrive',       desc: 'Microsoft cloud storage', url: 'https://onedrive.live.com/', section: 'Files' },
+    { id: 'dropbox',  icon: '📦', label: 'Dropbox',        desc: 'File storage',            url: 'https://www.dropbox.com/',  section: 'Files' },
+    { id: 'gmail',    icon: '📧', label: 'Gmail',           desc: 'Google email',            url: 'https://mail.google.com/',  section: 'Files' },
+    { id: 'notion',   icon: '📝', label: 'Notion',          desc: 'Docs & wikis',            url: 'https://www.notion.so/',    section: 'Files' },
+    { id: 'canva',    icon: '🎨', label: 'Canva',           desc: 'Design tool',             url: 'https://www.canva.com/',    section: 'Files' },
+    { id: 'calendar', icon: '📅', label: 'Google Calendar', desc: 'Schedule & events',      url: 'https://calendar.google.com/', section: 'Files' },
+];
+
+/* ═══════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════ */
 function loadState(key, def) { try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : def; } catch { return def; } }
 function saveState(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
 
 let stats       = loadState('ds_stats', {});
 let posted      = loadState('ds_posted', {});
 let metrics     = loadState('ds_metrics', []);
+let customLinks = loadState('ds_links', DEFAULT_LINKS);
 let weekOffset  = 0;
 let activeLines = { facebook: true, instagram: true, tiktok: true };
 
+/* Migrate: ensure all DEFAULT_LINKS exist (first run after update) */
+DEFAULT_LINKS.forEach(dl => { if (!customLinks.find(l => l.id === dl.id)) customLinks.push(dl); });
+saveState('ds_links', customLinks);
+
+/* ═══════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════ */
 function fmt(n) { return n != null && !isNaN(n) ? Math.round(n).toLocaleString() : '—'; }
 function timeAgo(iso) {
     if (!iso) return null;
@@ -525,7 +632,7 @@ function timeAgo(iso) {
     return new Date(iso).toLocaleDateString('en-US', { month:'short', day:'numeric' });
 }
 function getWeekDates(offset = 0) {
-    const now = new Date(); const day = now.getDay(); const monday = new Date(now);
+    const now = new Date(), day = now.getDay(), monday = new Date(now);
     monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1) + offset * 7);
     return DAYS.map((_, i) => { const d = new Date(monday); d.setDate(monday.getDate() + i); return d; });
 }
@@ -535,6 +642,9 @@ function copyText(text, el) {
     if (el) { const orig = el.textContent; el.textContent = '✓ Copied'; el.classList.add('copied'); setTimeout(() => { el.textContent = orig; el.classList.remove('copied'); }, 2000); }
 }
 
+/* ═══════════════════════════════════════════════════════
+   HEADER + HERO
+═══════════════════════════════════════════════════════ */
 function initHeader() {
     const now = new Date();
     document.getElementById('header-date').textContent = now.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
@@ -544,13 +654,108 @@ function initHeader() {
     const msgs = ["Here's your social media snapshot for today.", "Let's make today's content count. 💃", "Your audience is waiting — let's show up!", "Keep the momentum going!"];
     document.getElementById('hero-tagline').textContent = msgs[now.getDay() % msgs.length];
 }
-
 function updateHeroTotals() {
     const total = ['instagram','tiktok','facebook'].reduce((sum, pid) => sum + (stats[pid]?.followers || 0), 0);
     const el = document.getElementById('total-followers');
     if (el) el.textContent = total > 0 ? total.toLocaleString() : '—';
 }
 
+/* ═══════════════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════════════ */
+function renderSidebar() {
+    const container = document.getElementById('sidebar-links');
+    // Group by section
+    const sections = {};
+    customLinks.forEach(l => {
+        const sec = l.section || 'Other';
+        if (!sections[sec]) sections[sec] = [];
+        sections[sec].push(l);
+    });
+
+    let html = '';
+    Object.entries(sections).forEach(([sec, links]) => {
+        html += `<div class="sidebar-section-label">${sec}</div>`;
+        links.forEach(l => {
+            html += `
+            <a class="sidebar-link" href="${l.url}" target="_blank" rel="noopener">
+                <div class="sidebar-link-icon" style="background:rgba(255,255,255,0.04)">${l.icon}</div>
+                <div class="sidebar-link-text">
+                    <div class="sidebar-link-label">${l.label}</div>
+                    ${l.desc ? `<div class="sidebar-link-desc">${l.desc}</div>` : ''}
+                </div>
+                <button class="sidebar-link-remove" onclick="removeLink(event,'${l.id}')" title="Remove">×</button>
+            </a>`;
+        });
+    });
+    container.innerHTML = html;
+    renderPresets();
+}
+
+function removeLink(e, id) {
+    e.preventDefault(); e.stopPropagation();
+    customLinks = customLinks.filter(l => l.id !== id);
+    saveState('ds_links', customLinks);
+    renderSidebar();
+}
+
+function renderPresets() {
+    const grid = document.getElementById('preset-grid');
+    if (!grid) return;
+    const existingIds = new Set(customLinks.map(l => l.id));
+    grid.innerHTML = PRESETS.map(p => {
+        const added = existingIds.has(p.id);
+        return `<button class="preset-btn${added ? ' added' : ''}" onclick="addPreset('${p.id}')" ${added ? 'disabled' : ''}>
+            <span class="preset-icon">${p.icon}</span>${p.label}${added ? ' ✓' : ''}
+        </button>`;
+    }).join('');
+}
+
+function addPreset(id) {
+    const preset = PRESETS.find(p => p.id === id);
+    if (!preset || customLinks.find(l => l.id === id)) return;
+    customLinks.push({ ...preset });
+    saveState('ds_links', customLinks);
+    renderSidebar();
+}
+
+/* Add link form */
+document.getElementById('sidebar-add-btn').onclick = () => {
+    const form = document.getElementById('sidebar-add-form');
+    form.classList.toggle('open');
+    if (form.classList.contains('open')) renderPresets();
+};
+document.getElementById('add-cancel-btn').onclick = () => {
+    document.getElementById('sidebar-add-form').classList.remove('open');
+    ['add-icon','add-name','add-url','add-desc'].forEach(id => document.getElementById(id).value = '');
+};
+document.getElementById('add-save-btn').onclick = () => {
+    const name = document.getElementById('add-name').value.trim();
+    const url  = document.getElementById('add-url').value.trim();
+    if (!name || !url) { alert('Name and URL are required.'); return; }
+    const icon = document.getElementById('add-icon').value.trim() || '🔗';
+    const desc = document.getElementById('add-desc').value.trim();
+    const id = 'custom_' + Date.now();
+    customLinks.push({ id, icon, label: name, desc, url, section: 'My Links' });
+    saveState('ds_links', customLinks);
+    ['add-icon','add-name','add-url','add-desc'].forEach(i => document.getElementById(i).value = '');
+    document.getElementById('sidebar-add-form').classList.remove('open');
+    renderSidebar();
+};
+
+/* Mobile sidebar toggle */
+document.getElementById('sidebar-toggle').onclick = () => {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebar-overlay').classList.toggle('open');
+};
+document.getElementById('sidebar-overlay').onclick = () => {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+};
+
+/* ═══════════════════════════════════════════════════════
+   PLATFORM CARDS
+═══════════════════════════════════════════════════════ */
 function renderPlatformCards() {
     const container = document.getElementById('platform-cards');
     container.innerHTML = PLATFORMS.map(p => {
@@ -591,12 +796,12 @@ function renderPlatformCards() {
 }
 
 function startEdit(pid) {
-    const s = stats[pid] || {}; const inp = document.getElementById(`edit-input-${pid}`);
-    const editRow = document.getElementById(`edit-${pid}`); const valEl = document.getElementById(`fv-${pid}`);
+    const s = stats[pid] || {}, inp = document.getElementById(`edit-input-${pid}`),
+          editRow = document.getElementById(`edit-${pid}`), valEl = document.getElementById(`fv-${pid}`);
     inp.value = s.followers || 0; valEl.style.display = 'none'; editRow.classList.add('active'); inp.focus(); inp.select();
 }
 function commitEdit(pid) {
-    const inp = document.getElementById(`edit-input-${pid}`); const val = parseInt(inp.value) || 0;
+    const inp = document.getElementById(`edit-input-${pid}`), val = parseInt(inp.value) || 0;
     const s = stats[pid] || { followers: 0, lastWeek: 0, weeklyReach: 0 };
     stats[pid] = { ...s, lastWeek: s.followers || 0, followers: val, updatedAt: new Date().toISOString() };
     saveState('ds_stats', stats); renderPlatformCards();
@@ -606,12 +811,15 @@ function editKey(e, pid) {
     if (e.key === 'Escape') { document.getElementById(`edit-${pid}`).classList.remove('active'); document.getElementById(`fv-${pid}`).style.display = ''; }
 }
 function editReach(pid) {
-    const s = stats[pid] || {}; const v = prompt('Weekly reach:', s.weeklyReach || 0);
+    const s = stats[pid] || {}, v = prompt('Weekly reach:', s.weeklyReach || 0);
     if (v === null) return;
     stats[pid] = { ...s, weeklyReach: parseInt(v) || 0, updatedAt: new Date().toISOString() };
     saveState('ds_stats', stats); renderPlatformCards();
 }
 
+/* ═══════════════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════════════ */
 document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -622,26 +830,28 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
 });
 
+/* ═══════════════════════════════════════════════════════
+   CALENDAR
+═══════════════════════════════════════════════════════ */
 function renderCalendar() {
-    const dates = getWeekDates(weekOffset); const today = new Date(); const weekKey = `week_${weekOffset}`;
+    const dates = getWeekDates(weekOffset), today = new Date(), weekKey = `week_${weekOffset}`;
     const lbl = document.getElementById('week-label');
     lbl.textContent = weekOffset === 0 ? 'This Week' : weekOffset > 0 ? `+${weekOffset}w` : `${weekOffset}w`;
     document.getElementById('cal-today').style.display = weekOffset !== 0 ? '' : 'none';
     const grid = document.getElementById('calendar-grid');
     grid.innerHTML = DAYS.map((day, i) => {
-        const d = dates[i]; const isToday = d.toDateString() === today.toDateString(); const isPast = d < today && !isToday;
+        const d = dates[i], isToday = d.toDateString() === today.toDateString(), isPast = d < today && !isToday;
         const items = Object.entries(CALENDAR_DATA[day]).filter(([, v]) => v);
         const postsHtml = items.length === 0 ? '<div class="rest-day">Rest day</div>'
             : items.map(([pid, text]) => {
-                const pl = PLATFORMS.find(p => p.id === pid); const key = `${weekKey}_${day}_${pid}`; const isDone = !!posted[key];
+                const pl = PLATFORMS.find(p => p.id === pid), key = `${weekKey}_${day}_${pid}`, isDone = !!posted[key];
                 return `<div class="cal-post${isDone ? ' done' : ''}" onclick="togglePost('${key}')">
                     <div class="post-check" style="border:${isDone ? 'none' : `1.5px solid ${pl.color}55`};background:${isDone ? pl.color : 'transparent'}">${isDone ? '✓' : ''}</div>
                     <div><div class="post-platform-tag" style="color:${pl.color}">${pid.slice(0,2).toUpperCase()}</div>
                     <div class="post-text${isDone ? ' done' : ''}">${text}</div></div></div>`;
             }).join('');
         return `<div class="cal-day${isToday ? ' today' : ''}${isPast ? ' past' : ''}">
-            <div class="cal-day-name">${day.slice(0,3)}</div>
-            <div class="cal-date">${d.getDate()}</div>${postsHtml}</div>`;
+            <div class="cal-day-name">${day.slice(0,3)}</div><div class="cal-date">${d.getDate()}</div>${postsHtml}</div>`;
     }).join('');
     document.getElementById('cal-legend').innerHTML = PLATFORMS.map(p =>
         `<div class="legend-item"><div class="legend-dot" style="background:${p.color}"></div><span class="legend-text">${p.name}</span></div>`
@@ -652,8 +862,10 @@ document.getElementById('cal-prev').onclick  = () => { weekOffset--; renderCalen
 document.getElementById('cal-next').onclick  = () => { weekOffset++; renderCalendar(); };
 document.getElementById('cal-today').onclick = () => { weekOffset = 0; renderCalendar(); };
 
-const logFormEl = document.getElementById('log-form');
-const toggleBtn = document.getElementById('toggle-log-form');
+/* ═══════════════════════════════════════════════════════
+   METRICS LOG
+═══════════════════════════════════════════════════════ */
+const logFormEl = document.getElementById('log-form'), toggleBtn = document.getElementById('toggle-log-form');
 toggleBtn.onclick = () => {
     const open = logFormEl.classList.toggle('visible');
     toggleBtn.textContent = open ? 'Cancel' : '+ Log This Week';
@@ -665,8 +877,8 @@ document.getElementById('save-log-entry').onclick = () => {
     const entry = { id: Date.now(), week,
         fb_followers: document.getElementById('f-fb-f').value, fb_reach: document.getElementById('f-fb-r').value,
         ig_followers: document.getElementById('f-ig-f').value, ig_reach: document.getElementById('f-ig-r').value,
-        tt_followers: document.getElementById('f-tt-f').value, tt_views: document.getElementById('f-tt-v').value,
-        reviews: document.getElementById('f-reviews').value,   notes: document.getElementById('f-notes').value };
+        tt_followers: document.getElementById('f-tt-f').value, tt_views:  document.getElementById('f-tt-v').value,
+        reviews:      document.getElementById('f-reviews').value, notes: document.getElementById('f-notes').value };
     metrics.push(entry); saveState('ds_metrics', metrics);
     ['f-week','f-fb-f','f-fb-r','f-ig-f','f-ig-r','f-tt-f','f-tt-v','f-reviews','f-notes'].forEach(id => document.getElementById(id).value = '');
     logFormEl.classList.remove('visible'); toggleBtn.textContent = '+ Log This Week'; toggleBtn.className = 'btn-gold';
@@ -683,11 +895,14 @@ function renderMetricsTable() {
         const nums = [m.fb_followers, m.fb_reach, m.ig_followers, m.ig_reach, m.tt_followers, m.tt_views, m.reviews];
         return `<tr><td style="color:#ccc;white-space:nowrap">${m.week}</td>
             ${nums.map(v => `<td class="num">${v ? parseInt(v).toLocaleString() : '—'}</td>`).join('')}
-            <td style="color:rgba(240,232,223,0.45);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.notes || '—'}</td></tr>`;
+            <td style="color:rgba(240,232,223,0.42);max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.notes || '—'}</td></tr>`;
     }).join('');
     wrap.innerHTML = `<div class="table-wrap"><table class="data-table"><thead><tr>${headers.map((h,i) => `<th${i>0&&i<8?' class="num"':''}>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
+/* ═══════════════════════════════════════════════════════
+   GROWTH CHART
+═══════════════════════════════════════════════════════ */
 const SERIES = [
     { key: 'fb_followers', id: 'facebook',  label: 'Facebook',  color: '#1877F2' },
     { key: 'ig_followers', id: 'instagram', label: 'Instagram', color: '#E1306C' },
@@ -702,11 +917,11 @@ function renderGrowth() {
             <div class="toggle-dot" style="background:${on ? s.color : '#333'}"></div>${s.label}</button>`;
     }).join('');
     if (sorted.length < 2) {
-        panel.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px"><div class="panel-title" style="margin-bottom:0">Follower Growth History</div><div class="chart-toggles">${togglesHtml}</div></div>
+        panel.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px"><div class="panel-title" style="margin-bottom:0">Follower Growth History</div><div class="chart-toggles">${togglesHtml}</div></div>
         <div class="chart-empty"><div class="icon">📈</div><div class="title">No chart data yet</div><p>Log at least 2 weeks in the Metrics Log tab to see your growth chart here.</p></div>`;
         return;
     }
-    const W = 860, H = 280, PAD = { top: 24, right: 24, bottom: 48, left: 64 };
+    const W = 800, H = 260, PAD = { top: 22, right: 22, bottom: 44, left: 58 };
     const iW = W - PAD.left - PAD.right, iH = H - PAD.top - PAD.bottom, n = sorted.length;
     const activeVals = sorted.flatMap(m => SERIES.filter(s => activeLines[s.id]).map(s => parseInt(m[s.key]) || 0)).filter(v => v > 0);
     const maxVal = activeVals.length ? Math.ceil(Math.max(...activeVals) * 1.1) : 100;
@@ -714,8 +929,8 @@ function renderGrowth() {
     const fmtDate = d => { const dt = new Date(d); return `${dt.getMonth()+1}/${dt.getDate()}`; };
     const fmtNum = v => v >= 1000 ? (v/1000).toFixed(1)+'k' : String(v);
     const yTicks = [0,0.25,0.5,0.75,1].map(t => Math.round(maxVal * t));
-    const gridLines = yTicks.map(v => `<line x1="0" y1="${ySc(v)}" x2="${iW}" y2="${ySc(v)}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/><text x="-10" y="${ySc(v)+4}" text-anchor="end" fill="rgba(240,232,223,0.28)" font-size="10">${fmtNum(v)}</text>`).join('');
-    const xLabels = sorted.map((m,i) => `<text x="${xSc(i)}" y="${iH+18}" text-anchor="middle" fill="rgba(240,232,223,0.3)" font-size="10">${fmtDate(m.week)}</text>`).join('');
+    const gridLines = yTicks.map(v => `<line x1="0" y1="${ySc(v)}" x2="${iW}" y2="${ySc(v)}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/><text x="-8" y="${ySc(v)+4}" text-anchor="end" fill="rgba(240,232,223,0.28)" font-size="10">${fmtNum(v)}</text>`).join('');
+    const xLabels = sorted.map((m,i) => `<text x="${xSc(i)}" y="${iH+16}" text-anchor="middle" fill="rgba(240,232,223,0.28)" font-size="10">${fmtDate(m.week)}</text>`).join('');
     const seriesSvg = SERIES.filter(s => activeLines[s.id]).map(s => {
         const pts = sorted.map((m,i) => { const v = parseInt(m[s.key])||0; return v ? [xSc(i), ySc(v)] : null; }).filter(Boolean);
         if (pts.length < 2) return '';
@@ -723,23 +938,26 @@ function renderGrowth() {
         const ap = `${lp} L${pts[pts.length-1][0].toFixed(1)},${iH} L${pts[0][0].toFixed(1)},${iH} Z`;
         return `<path d="${ap}" fill="${s.color}" fill-opacity="0.05"/>
                 <path d="${lp}" fill="none" stroke="${s.color}" stroke-width="2" stroke-opacity="0.8" stroke-linejoin="round" stroke-linecap="round"/>
-                ${pts.map(p => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.5" fill="${s.color}" fill-opacity="0.9"/>`).join('')}`;
+                ${pts.map(p => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3" fill="${s.color}" fill-opacity="0.9"/>`).join('')}`;
     }).join('');
     const summaryCards = SERIES.map(s => {
         const vals = sorted.map(m => parseInt(m[s.key])||0).filter(v=>v>0);
         if (vals.length < 2) return '';
-        const growth = vals[vals.length-1] - vals[0]; const pct = vals[0] > 0 ? ((growth/vals[0])*100).toFixed(1) : '—';
+        const growth = vals[vals.length-1] - vals[0], pct = vals[0] > 0 ? ((growth/vals[0])*100).toFixed(1) : '—';
         return `<div class="growth-card" style="border-color:${s.color}22"><div class="growth-card-head"><div class="growth-dot" style="background:${s.color}"></div><span class="growth-platform">${s.label}</span></div>
             <div class="growth-followers">${vals[vals.length-1].toLocaleString()}</div>
             <div class="growth-delta" style="color:${growth>=0?'#4ade80':'#f87171'}">${growth>=0?'+':''}${growth.toLocaleString()} (${pct}%)</div>
             <div class="growth-weeks">over ${vals.length} weeks tracked</div></div>`;
     }).join('');
-    panel.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px"><div class="panel-title" style="margin-bottom:0">Follower Growth History</div><div class="chart-toggles">${togglesHtml}</div></div>
+    panel.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px"><div class="panel-title" style="margin-bottom:0">Follower Growth History</div><div class="chart-toggles">${togglesHtml}</div></div>
         <div class="chart-wrap"><svg viewBox="0 0 ${W} ${H}"><g transform="translate(${PAD.left},${PAD.top})">${gridLines}${xLabels}${seriesSvg}</g></svg></div>
         <div class="growth-summary">${summaryCards}</div>`;
 }
 function toggleLine(id) { activeLines[id] = !activeLines[id]; renderGrowth(); }
 
+/* ═══════════════════════════════════════════════════════
+   CONTENT IDEAS
+═══════════════════════════════════════════════════════ */
 function renderContentIdeas() {
     document.getElementById('ideas-grid').innerHTML = CONTENT_IDEAS.map(cat => `
         <div class="idea-category"><div class="idea-cat-title">${cat.cat}</div>
@@ -755,16 +973,9 @@ function copyHashtag(el, text) {
     setTimeout(() => { el.classList.remove('copied'); hint.textContent = origText; hint.classList.remove('copied'); }, 2000);
 }
 
-function renderQuickLinks() {
-    document.getElementById('links-grid').innerHTML = QUICK_LINKS.map(l => `
-        <a class="quick-link" href="${l.url}" target="_blank" rel="noopener"
-           style="border-color:var(--border)"
-           onmouseenter="this.style.borderColor='${l.color}44'" onmouseleave="this.style.borderColor='var(--border)'">
-            <div class="link-icon" style="background:${l.color}18">${l.icon}</div>
-            <div><div class="link-label">${l.label}</div><div class="link-desc">${l.desc}</div></div>
-            <span class="link-arrow">↗</span></a>`).join('');
-}
-
+/* ═══════════════════════════════════════════════════════
+   API SYNC
+═══════════════════════════════════════════════════════ */
 function syncFromApi() {
     const badge = document.getElementById('api-badge'), dot = document.getElementById('api-dot'), lbl = document.getElementById('api-label');
     badge.style.display = 'flex'; dot.className = 'api-dot'; dot.style.background = '#444'; lbl.textContent = 'Syncing…';
@@ -784,7 +995,16 @@ function syncFromApi() {
         });
 }
 
-initHeader(); renderPlatformCards(); renderCalendar(); renderMetricsTable(); renderContentIdeas(); renderQuickLinks(); syncFromApi();
+/* ═══════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════ */
+initHeader();
+renderSidebar();
+renderPlatformCards();
+renderCalendar();
+renderMetricsTable();
+renderContentIdeas();
+syncFromApi();
 setInterval(syncFromApi, 5 * 60 * 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) syncFromApi(); });
 </script>
