@@ -1,0 +1,13 @@
+{
+  "name": "dancescapes-portal",
+  "version": "1.0.0",
+  "description": "Static portal for Dancescapes — local dev scripts",
+  "private": true,
+  "scripts": {
+    "start": "npx http-server . -p 8080",
+    "dev": "npx live-server --port=8080 --open=portal.html",
+    "serve-python": "python -m http.server 8000"
+  },
+  "author": "",
+  "license": "MIT"
+}
