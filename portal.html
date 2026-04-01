@@ -3,28 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dancescapes — Social Media Planner</title>
+    <title>Dancescapes — Social Media Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --gold: #c9a84c;
-            --gold-dim: rgba(201,168,76,0.15);
-            --gold-border: rgba(201,168,76,0.2);
-            --bg: #0f0f0f;
-            --bg-header: #0a0a0a;
-            --bg-card: #1a1a1a;
-            --bg-content: #141414;
-            --text: #e8e0d5;
-            --text-dim: rgba(232,224,213,0.5);
-            --text-faint: rgba(232,224,213,0.25);
+            --gold-light: #e8c76a;
+            --gold-dim: rgba(201,168,76,0.12);
+            --gold-border: rgba(201,168,76,0.22);
+            --rose: #d4619c;
+            --bg: #080808;
+            --bg-header: rgba(8,8,8,0.96);
+            --bg-card: #121212;
+            --bg-elevated: #181818;
+            --bg-content: #0e0e0e;
+            --text: #f0e8df;
+            --text-dim: rgba(240,232,223,0.5);
+            --text-faint: rgba(240,232,223,0.2);
             --border: rgba(255,255,255,0.06);
+            --border-gold: rgba(201,168,76,0.18);
             --green: #4ade80;
             --red: #f87171;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #111; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg); color: var(--text); min-height: 100vh;
+            background-image:
+                radial-gradient(ellipse at 15% 0%, rgba(201,168,76,0.05) 0%, transparent 55%),
+                radial-gradient(ellipse at 85% 100%, rgba(212,97,156,0.03) 0%, transparent 50%);
+        }
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
         button { cursor: pointer; font-family: inherit; }
         input, textarea, select { font-family: inherit; }
         a { cursor: pointer; }
@@ -35,292 +48,280 @@
             border-bottom: 1px solid var(--gold-border);
             padding: 0 32px;
             position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(16px);
         }
         .header-inner {
             max-width: 1400px; margin: 0 auto;
             display: flex; align-items: center; justify-content: space-between;
-            height: 64px;
+            height: 70px;
         }
         .brand { display: flex; align-items: center; gap: 14px; }
-        .brand-icon {
-            width: 36px; height: 36px; border-radius: 8px;
-            background: var(--gold-dim); border: 1px solid rgba(201,168,76,0.35);
-            display: flex; align-items: center; justify-content: center; font-size: 20px;
+        .brand-logo { height: 46px; width: auto; border-radius: 8px; object-fit: contain; display: block; }
+        .brand-logo-fallback {
+            width: 46px; height: 46px; border-radius: 10px;
+            background: var(--gold-dim); border: 1px solid var(--gold-border);
+            display: none; align-items: center; justify-content: center; font-size: 24px;
         }
-        .brand-name { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text); }
-        .brand-sub { font-size: 10px; color: var(--gold); letter-spacing: 0.15em; text-transform: uppercase; }
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 21px; font-weight: 700; line-height: 1.1;
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 60%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .brand-sub { font-size: 10px; color: var(--text-dim); letter-spacing: 0.16em; text-transform: uppercase; margin-top: 2px; }
         .header-right { display: flex; align-items: center; gap: 18px; }
-        .api-badge { display: flex; align-items: center; gap: 6px; font-size: 11px; }
-        .api-dot { width: 6px; height: 6px; border-radius: 50%; }
+        .api-badge {
+            display: flex; align-items: center; gap: 7px;
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            border-radius: 20px; padding: 5px 13px; font-size: 11px; font-weight: 500; color: var(--text-dim);
+        }
+        .api-dot { width: 7px; height: 7px; border-radius: 50%; transition: background 0.4s; flex-shrink: 0; }
+        @keyframes livePulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.5); }
+            50%      { box-shadow: 0 0 0 5px rgba(74,222,128,0); }
+        }
+        .api-dot.live { animation: livePulse 2.2s infinite; }
         .date-label { font-size: 12px; color: var(--text-dim); }
 
+        /* ─── Hero Strip ─────────────────────────────────────────── */
+        .hero-strip {
+            background: linear-gradient(135deg, rgba(201,168,76,0.07) 0%, rgba(212,97,156,0.03) 50%, transparent 100%);
+            border-bottom: 1px solid var(--gold-border); padding: 22px 32px;
+        }
+        .hero-inner {
+            max-width: 1400px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+        }
+        .hero-greeting {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px; font-weight: 600; color: var(--text); line-height: 1.2;
+        }
+        .hero-greeting .brand-accent { color: var(--gold); }
+        .hero-tagline { font-size: 12px; color: var(--text-dim); margin-top: 4px; }
+        .hero-totals { display: flex; gap: 32px; align-items: center; }
+        .hero-divider { width: 1px; height: 36px; background: var(--gold-border); }
+        .hero-stat-val { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: var(--gold); line-height: 1; }
+        .hero-stat-val.accent { color: var(--rose); }
+        .hero-stat-lbl { font-size: 10px; color: var(--text-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px; }
+
         /* ─── Main layout ────────────────────────────────────────── */
-        .main { max-width: 1400px; margin: 0 auto; padding: 24px 32px; }
+        .main { max-width: 1400px; margin: 0 auto; padding: 28px 32px; }
 
         /* ─── API notice ─────────────────────────────────────────── */
         .api-notice {
-            background: rgba(201,168,76,0.06); border: 1px solid rgba(201,168,76,0.15);
-            border-radius: 8px; padding: 10px 16px; margin-bottom: 20px;
-            display: flex; align-items: center; gap: 10; font-size: 12px; color: var(--text-dim);
-            display: none;
+            background: rgba(201,168,76,0.05); border: 1px solid rgba(201,168,76,0.15);
+            border-radius: 10px; padding: 10px 16px; margin-bottom: 22px;
+            display: none; align-items: center; gap: 10px; font-size: 12px; color: var(--text-dim);
         }
 
         /* ─── Platform cards ─────────────────────────────────────── */
-        .platform-cards { display: flex; gap: 14px; margin-bottom: 28px; flex-wrap: wrap; }
+        .platform-cards { display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap; }
         .stat-card {
             flex: 1; min-width: 200px;
-            background: var(--bg-card); border: 1px solid rgba(201,168,76,0.15);
-            border-radius: 10px; padding: 18px 20px; position: relative; overflow: hidden;
-            transition: box-shadow 0.2s;
+            background: var(--bg-card); border: 1px solid var(--border-gold);
+            border-radius: 16px; padding: 22px 24px;
+            position: relative; overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
         }
-        .stat-card:hover { box-shadow: 0 4px 24px rgba(201,168,76,0.1); }
-        .card-top-bar { position: absolute; top: 0; left: 0; right: 0; height: 2px; }
-        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-        .card-platform { display: flex; align-items: center; gap: 10; }
-        .platform-badge {
-            width: 34px; height: 34px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
+        .stat-card::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.025) 0%, transparent 60%);
+            pointer-events: none; border-radius: 16px;
         }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+        .card-glow { position: absolute; top: -40px; right: -40px; width: 140px; height: 140px; border-radius: 50%; pointer-events: none; opacity: 0.07; }
+        .card-top-bar { position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 16px 16px 0 0; }
+        .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+        .card-platform { display: flex; align-items: center; gap: 11px; }
+        .platform-badge { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .platform-badge svg { display: block; }
-        .platform-name { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-        .analytics-link { font-size: 10px; color: var(--gold); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; }
-        .analytics-link:hover { color: #e8c96a; }
-        .metric-row { margin-bottom: 10px; }
-        .metric-label-sm { font-size: 11px; color: rgba(232,224,213,0.4); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
-        .follower-row { display: flex; align-items: baseline; gap: 8px; }
+        .platform-name { font-size: 13px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+        .analytics-link {
+            font-size: 10px; color: var(--gold); text-decoration: none;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            background: var(--gold-dim); border: 1px solid transparent;
+            padding: 4px 10px; border-radius: 12px; transition: all 0.2s; opacity: 0.75;
+        }
+        .analytics-link:hover { opacity: 1; border-color: var(--gold-border); }
+        .metric-row { margin-bottom: 13px; }
+        .metric-label-sm { font-size: 10px; color: rgba(240,232,223,0.32); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 5px; }
+        .follower-row { display: flex; align-items: baseline; gap: 10px; }
         .follower-value {
-            font-size: 28px; font-weight: 700; color: #fff; cursor: pointer;
-            transition: color 0.15s;
+            font-family: 'Playfair Display', serif;
+            font-size: 34px; font-weight: 700; color: #fff; cursor: pointer;
+            transition: color 0.15s; line-height: 1;
         }
         .follower-value:hover { color: var(--gold); }
         .follower-change { font-size: 12px; font-weight: 600; }
-        .reach-value { font-size: 16px; font-weight: 600; color: rgba(232,224,213,0.7); cursor: pointer; }
+        .reach-value { font-size: 16px; font-weight: 600; color: rgba(240,232,223,0.6); cursor: pointer; transition: color 0.15s; }
         .reach-value:hover { color: var(--gold); }
-        .card-updated { font-size: 9px; color: rgba(232,224,213,0.2); margin-top: 10px; letter-spacing: 0.08em; }
-        .inline-edit { display: none; gap: 6px; }
+        .card-updated { font-size: 9px; color: rgba(240,232,223,0.18); margin-top: 13px; letter-spacing: 0.07em; }
+        .inline-edit { display: none; gap: 7px; }
         .inline-edit.active { display: flex; }
         .inline-edit input {
-            background: #111; border: 1px solid var(--gold); border-radius: 4px;
-            color: #fff; padding: 4px 8px; font-size: 22px; width: 110px; font-weight: 700;
+            background: rgba(255,255,255,0.06); border: 1px solid var(--gold); border-radius: 7px;
+            color: #fff; padding: 5px 10px; font-size: 22px; width: 120px; font-weight: 700;
         }
-        .inline-edit button {
-            background: var(--gold); border: none; border-radius: 4px;
-            color: #000; padding: 0 10px; font-size: 11px; font-weight: 700;
-        }
+        .inline-edit button { background: var(--gold); border: none; border-radius: 7px; color: #000; padding: 0 12px; font-size: 12px; font-weight: 700; }
 
         /* ─── Tabs ───────────────────────────────────────────────── */
         .tab-bar {
-            display: flex; gap: 0; margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex; gap: 5px; margin-bottom: 22px;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 5px;
         }
         .tab-btn {
-            background: none; border: none; padding: 10px 22px;
-            font-size: 13px; font-weight: 600; letter-spacing: 0.06em;
-            color: var(--text-dim); border-bottom: 2px solid transparent;
-            margin-bottom: -1px; transition: color 0.2s;
+            background: none; border: none; border-radius: 10px;
+            padding: 9px 18px; font-size: 13px; font-weight: 600;
+            color: var(--text-dim); transition: all 0.2s; flex: 1; white-space: nowrap;
         }
-        .tab-btn:hover { color: var(--text); }
-        .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+        .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+        .tab-btn.active {
+            color: #000 !important;
+            background: linear-gradient(135deg, var(--gold-light), var(--gold));
+            box-shadow: 0 2px 14px rgba(201,168,76,0.28);
+        }
 
         /* ─── Tab panels ─────────────────────────────────────────── */
         .tab-panel { display: none; }
         .tab-panel.active { display: block; }
-        .panel-box {
-            background: var(--bg-content); border: 1px solid var(--border);
-            border-radius: 12px; padding: 24px;
-        }
-        .panel-title {
-            font-size: 16px; font-weight: 700; letter-spacing: 0.1em;
-            text-transform: uppercase; color: var(--gold); margin-bottom: 16px;
-        }
+        .panel-box { background: var(--bg-content); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+        .panel-title { font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; color: var(--gold); margin-bottom: 20px; }
 
         /* ─── Calendar ───────────────────────────────────────────── */
-        .calendar-toolbar {
-            display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
-        }
+        .calendar-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
         .cal-nav { display: flex; gap: 8px; align-items: center; }
-        .cal-nav button {
-            background: #252525; border: 1px solid #333; color: #ccc;
-            border-radius: 6px; padding: 5px 14px; font-size: 13px;
-        }
-        .cal-nav button:hover { border-color: #555; color: #fff; }
-        .cal-nav .today-btn {
-            background: var(--gold-dim); border: 1px solid var(--gold); color: var(--gold);
-        }
+        .cal-nav button { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: var(--text-dim); border-radius: 8px; padding: 6px 14px; font-size: 12px; transition: all 0.15s; }
+        .cal-nav button:hover { border-color: var(--gold-border); color: var(--text); }
+        .cal-nav .today-btn { background: var(--gold-dim); border-color: var(--gold-border); color: var(--gold); }
         .week-label { font-size: 12px; color: var(--text-dim); min-width: 80px; text-align: center; }
-        .calendar-grid {
-            display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;
-        }
-        .cal-day {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 8px; padding: 10px; min-height: 185px;
-        }
-        .cal-day.today { background: rgba(201,168,76,0.08); border-color: var(--gold); }
-        .cal-day-name {
-            font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase;
-            color: rgba(232,224,213,0.35); margin-bottom: 2px;
-        }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+        .cal-day { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 11px; padding: 12px; min-height: 185px; transition: border-color 0.2s; }
+        .cal-day:hover { border-color: rgba(255,255,255,0.1); }
+        .cal-day.today { background: rgba(201,168,76,0.06); border-color: var(--gold-border); box-shadow: 0 0 24px rgba(201,168,76,0.06); }
+        .cal-day-name { font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(240,232,223,0.28); margin-bottom: 2px; }
         .cal-day.today .cal-day-name { color: var(--gold); }
-        .cal-date { font-size: 20px; font-weight: 700; color: #ccc; margin-bottom: 8px; }
+        .cal-date { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: #ccc; margin-bottom: 10px; }
         .cal-day.today .cal-date { color: var(--gold); }
-        .cal-day.past .cal-date { color: #444; }
-        .cal-post {
-            display: flex; align-items: flex-start; gap: 5px;
-            cursor: pointer; margin-bottom: 5px;
-        }
-        .cal-post.done { opacity: 0.4; }
-        .post-check {
-            width: 14px; height: 14px; border-radius: 3px;
-            flex-shrink: 0; margin-top: 1px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 9px; font-weight: 900; color: #000;
-        }
-        .post-platform-tag {
-            font-size: 9px; font-weight: 700; letter-spacing: 0.06em;
-            text-transform: uppercase; margin-bottom: 1px;
-        }
-        .post-text { font-size: 10px; color: rgba(232,224,213,0.65); line-height: 1.3; }
-        .post-text.done { color: #555; }
-        .rest-day { font-size: 10px; color: #333; font-style: italic; }
-        .cal-legend { margin-top: 10px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
-        .legend-item { display: flex; align-items: center; gap: 5px; }
-        .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
-        .legend-text { font-size: 10px; color: rgba(232,224,213,0.4); }
-        .legend-hint { font-size: 10px; color: rgba(232,224,213,0.3); margin-left: auto; }
+        .cal-day.past .cal-date { color: #363636; }
+        .cal-post { display: flex; align-items: flex-start; gap: 6px; cursor: pointer; margin-bottom: 6px; }
+        .cal-post.done { opacity: 0.35; }
+        .post-check { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 900; color: #000; }
+        .post-platform-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 1px; }
+        .post-text { font-size: 10px; color: rgba(240,232,223,0.58); line-height: 1.35; }
+        .post-text.done { color: #404040; }
+        .rest-day { font-size: 10px; color: #2a2a2a; font-style: italic; }
+        .cal-legend { margin-top: 14px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+        .legend-text { font-size: 10px; color: rgba(240,232,223,0.38); }
+        .legend-hint { font-size: 10px; color: rgba(240,232,223,0.22); margin-left: auto; font-style: italic; }
 
         /* ─── Metrics Log ────────────────────────────────────────── */
-        .metrics-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+        .metrics-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
         .btn-gold {
-            background: var(--gold); border: none; border-radius: 6px;
-            color: #000; padding: 7px 16px; font-size: 12px; font-weight: 700;
-            letter-spacing: 0.05em;
+            background: linear-gradient(135deg, var(--gold-light), var(--gold));
+            border: none; border-radius: 9px; color: #000;
+            padding: 9px 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
+            box-shadow: 0 2px 14px rgba(201,168,76,0.22); transition: opacity 0.2s, transform 0.15s;
         }
-        .btn-ghost {
-            background: #252525; border: none; border-radius: 6px;
-            color: #ccc; padding: 7px 16px; font-size: 12px; font-weight: 700;
-        }
-        .log-form {
-            background: var(--bg-card); border: 1px solid rgba(201,168,76,0.2);
-            border-radius: 10px; padding: 20px; margin-bottom: 20px; display: none;
-        }
+        .btn-gold:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-ghost { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 9px; color: var(--text-dim); padding: 9px 20px; font-size: 12px; font-weight: 600; transition: all 0.15s; }
+        .btn-ghost:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+        .log-form { background: var(--bg-elevated); border: 1px solid var(--gold-border); border-radius: 12px; padding: 22px; margin-bottom: 22px; display: none; }
         .log-form.visible { display: block; }
         .form-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
-        .form-field label { font-size: 10px; color: rgba(232,224,213,0.45); letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 4px; }
-        .form-field input, .form-field textarea {
-            background: #111; border: 1px solid #333; color: var(--text);
-            border-radius: 6px; padding: 7px 10px; font-size: 13px; width: 100%;
-        }
-        .form-field input:focus, .form-field textarea:focus { outline: none; border-color: var(--gold); }
+        .form-field label { font-size: 10px; color: rgba(240,232,223,0.38); letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        .form-field input, .form-field textarea { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); color: var(--text); border-radius: 8px; padding: 8px 12px; font-size: 13px; width: 100%; transition: border-color 0.15s; }
+        .form-field input:focus, .form-field textarea:focus { outline: none; border-color: var(--gold); background: rgba(201,168,76,0.04); }
         .form-notes { margin-bottom: 14px; }
         .form-notes textarea { resize: vertical; }
-        .empty-state {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 10px; padding: 36px; text-align: center;
-            color: rgba(232,224,213,0.3); font-size: 13px;
-        }
-        .data-table { width: 100%; border-collapse: collapse; font-size: 12px; overflow-x: auto; }
-        .table-wrap { overflow-x: auto; }
-        .data-table thead th {
-            padding: 8px 12px; text-align: left;
-            font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
-            color: var(--gold); font-weight: 700;
-            border-bottom: 1px solid rgba(201,168,76,0.2);
-        }
+        .empty-state { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 52px 36px; text-align: center; }
+        .empty-state-icon { font-size: 40px; margin-bottom: 14px; opacity: 0.35; }
+        .empty-state-text { font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
+        .data-table thead th { padding: 10px 14px; text-align: left; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); font-weight: 700; background: rgba(201,168,76,0.05); border-bottom: 1px solid rgba(201,168,76,0.14); }
         .data-table thead th.num { text-align: right; }
-        .data-table tbody td { padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); }
-        .data-table tbody td.num { text-align: right; color: rgba(232,224,213,0.7); }
-        .data-table tbody tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+        .data-table tbody td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .data-table tbody td.num { text-align: right; color: rgba(240,232,223,0.6); }
+        .data-table tbody tr:last-child td { border-bottom: none; }
+        .data-table tbody tr:hover td { background: rgba(255,255,255,0.02); }
 
         /* ─── Growth chart ───────────────────────────────────────── */
-        .chart-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-        .chart-toggles { display: flex; gap: 8px; }
-        .toggle-btn {
-            display: flex; align-items: center; gap: 6px;
-            border-radius: 20px; padding: 4px 12px;
-            font-size: 11px; font-weight: 600; border: 1px solid;
-            transition: all 0.15s;
-        }
+        .chart-toggles { display: flex; gap: 8px; flex-wrap: wrap; }
+        .toggle-btn { display: flex; align-items: center; gap: 6px; border-radius: 20px; padding: 5px 14px; font-size: 11px; font-weight: 600; border: 1px solid; transition: all 0.15s; }
         .toggle-dot { width: 8px; height: 8px; border-radius: 50%; }
-        .chart-wrap {
-            background: var(--bg-card); border-radius: 10px;
-            padding: 20px 16px 12px; margin-bottom: 20px;
-        }
+        .chart-wrap { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 22px 18px 14px; margin-bottom: 22px; }
         .chart-wrap svg { width: 100%; height: auto; display: block; }
-        .growth-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px; }
-        .growth-card {
-            background: var(--bg-card); border-radius: 8px; padding: 14px 16px;
-        }
-        .growth-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .growth-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+        .growth-card { background: var(--bg-elevated); border-radius: 10px; padding: 16px 18px; border: 1px solid transparent; transition: border-color 0.2s; }
+        .growth-card:hover { border-color: rgba(201,168,76,0.14); }
+        .growth-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
         .growth-dot { width: 8px; height: 8px; border-radius: 50%; }
         .growth-platform { font-size: 11px; color: var(--text-dim); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
-        .growth-followers { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 2px; }
-        .growth-delta { font-size: 12px; }
-        .growth-weeks { font-size: 10px; color: rgba(232,224,213,0.25); margin-top: 2px; }
-        .chart-empty { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 48px; text-align: center; color: rgba(232,224,213,0.3); font-size: 13px; }
-        .chart-empty .icon { font-size: 36px; margin-bottom: 12px; }
-        .chart-empty .title { font-weight: 600; color: rgba(232,224,213,0.5); margin-bottom: 6px; }
+        .growth-followers { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+        .growth-delta { font-size: 12px; font-weight: 600; }
+        .growth-weeks { font-size: 10px; color: rgba(240,232,223,0.2); margin-top: 3px; }
+        .chart-empty { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 56px; text-align: center; }
+        .chart-empty .icon { font-size: 40px; margin-bottom: 14px; opacity: 0.28; }
+        .chart-empty .title { font-weight: 600; color: rgba(240,232,223,0.38); margin-bottom: 8px; font-size: 15px; }
+        .chart-empty p { font-size: 13px; color: rgba(240,232,223,0.22); }
 
         /* ─── Content Ideas ──────────────────────────────────────── */
-        .ideas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
-        .idea-category { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
-        .idea-cat-title { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; font-weight: 700; }
-        .idea-item {
-            font-size: 12px; color: rgba(232,224,213,0.65);
-            padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
-            cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 8px;
-        }
+        .ideas-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+        .idea-category { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+        .idea-cat-title { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+        .idea-cat-title::before { content: ''; display: block; width: 3px; height: 12px; background: var(--gold); border-radius: 2px; flex-shrink: 0; }
+        .idea-item { font-size: 12px; color: rgba(240,232,223,0.58); padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.03); cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 8px; transition: color 0.15s; }
         .idea-item:last-child { border-bottom: none; }
         .idea-item:hover { color: var(--text); }
-        .copy-hint { font-size: 9px; color: rgba(201,168,76,0.4); flex-shrink: 0; }
+        .copy-hint { font-size: 9px; color: rgba(201,168,76,0.32); flex-shrink: 0; }
         .copy-hint.copied { color: var(--green); }
-        .hashtag-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
-        .hashtag-title { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; font-weight: 700; }
-        .hashtag-row {
-            display: flex; align-items: center; gap: 12px; cursor: pointer;
-            padding: 7px 10px; border-radius: 6px; border: 1px solid transparent;
-            margin-bottom: 6px; transition: all 0.15s; background: rgba(255,255,255,0.02);
-        }
-        .hashtag-row:hover { background: rgba(201,168,76,0.08); }
-        .hashtag-row.copied { background: rgba(201,168,76,0.1); border-color: rgba(201,168,76,0.3); }
-        .hashtag-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(201,168,76,0.7); width: 60px; flex-shrink: 0; }
-        .hashtag-tags { font-size: 12px; color: rgba(232,224,213,0.6); flex: 1; }
-        .hashtag-copy { font-size: 10px; color: rgba(201,168,76,0.4); flex-shrink: 0; }
+        .hashtag-section { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 18px; }
+        .hashtag-title { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+        .hashtag-title::before { content: ''; display: block; width: 3px; height: 12px; background: var(--gold); border-radius: 2px; flex-shrink: 0; }
+        .hashtag-row { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 9px 12px; border-radius: 8px; border: 1px solid transparent; margin-bottom: 6px; transition: all 0.15s; background: rgba(255,255,255,0.02); }
+        .hashtag-row:hover { background: rgba(201,168,76,0.06); border-color: rgba(201,168,76,0.15); }
+        .hashtag-row.copied { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.25); }
+        .hashtag-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(201,168,76,0.65); width: 60px; flex-shrink: 0; }
+        .hashtag-tags { font-size: 12px; color: rgba(240,232,223,0.52); flex: 1; }
+        .hashtag-copy { font-size: 10px; color: rgba(201,168,76,0.32); flex-shrink: 0; }
         .hashtag-copy.copied { color: var(--green); }
 
         /* ─── Quick Links ────────────────────────────────────────── */
-        .links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .quick-link {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 8px; padding: 14px 16px; text-decoration: none;
-            display: flex; align-items: center; gap: 12px; transition: all 0.2s;
-        }
-        .quick-link:hover { background: #252525; }
-        .link-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .quick-link { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; text-decoration: none; display: flex; align-items: center; gap: 14px; transition: all 0.22s; }
+        .quick-link:hover { background: rgba(255,255,255,0.025); transform: translateY(-2px); }
+        .link-icon { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; }
         .link-label { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-        .link-desc { font-size: 11px; color: rgba(232,224,213,0.4); }
-        .link-arrow { margin-left: auto; font-size: 14px; color: rgba(232,224,213,0.25); }
+        .link-desc { font-size: 11px; color: rgba(240,232,223,0.36); }
+        .link-arrow { margin-left: auto; font-size: 15px; color: rgba(240,232,223,0.18); flex-shrink: 0; }
 
         /* ─── Footer ─────────────────────────────────────────────── */
-        .site-footer {
-            margin-top: 16px; text-align: center;
-            font-size: 11px; color: rgba(232,224,213,0.2);
-        }
+        .site-footer { margin-top: 28px; text-align: center; padding-bottom: 28px; font-size: 11px; color: rgba(240,232,223,0.18); }
         .site-footer a { color: rgba(201,168,76,0.4); text-decoration: none; }
         .site-footer a:hover { color: var(--gold); }
+        .site-footer strong { color: rgba(240,232,223,0.3); }
 
         /* ─── Responsive ─────────────────────────────────────────── */
+        @media (max-width: 1100px) { .ideas-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 900px) {
             .platform-cards { flex-direction: column; }
             .calendar-grid { grid-template-columns: repeat(4, 1fr); }
-            .ideas-grid, .growth-summary, .links-grid { grid-template-columns: repeat(2, 1fr); }
+            .growth-summary, .links-grid { grid-template-columns: repeat(2, 1fr); }
             .form-grid { grid-template-columns: repeat(2, 1fr); }
+            .hero-inner { flex-direction: column; align-items: flex-start; }
+            .hero-totals { gap: 20px; }
         }
         @media (max-width: 600px) {
             #site-header { padding: 0 16px; }
+            .hero-strip { padding: 16px; }
             .main { padding: 16px; }
             .calendar-grid { grid-template-columns: repeat(2, 1fr); }
             .ideas-grid, .growth-summary, .links-grid, .form-grid { grid-template-columns: 1fr; }
-            .tab-btn { padding: 10px 12px; font-size: 12px; }
+            .tab-btn { padding: 8px 8px; font-size: 11px; }
+            .panel-box { padding: 18px; }
         }
     </style>
 </head>
@@ -330,10 +331,13 @@
 <header id="site-header">
     <div class="header-inner">
         <div class="brand">
-            <div class="brand-icon">💃</div>
+            <img src="https://pub-ba8be99ab92a493c8f41012c737905d5.r2.dev/dancescapes%20logo.jpg"
+                 alt="Dancescapes" class="brand-logo"
+                 onerror="this.style.display='none';document.querySelector('.brand-logo-fallback').style.display='flex'">
+            <div class="brand-logo-fallback">💃</div>
             <div>
                 <div class="brand-name">Dancescapes</div>
-                <div class="brand-sub">Social Media Planner</div>
+                <div class="brand-sub">Social Media Command Center</div>
             </div>
         </div>
         <div class="header-right">
@@ -346,27 +350,44 @@
     </div>
 </header>
 
+<!-- ═══════════════════ HERO STRIP ═══════════════════ -->
+<div class="hero-strip">
+    <div class="hero-inner">
+        <div>
+            <div class="hero-greeting" id="hero-greeting">Welcome back, <span class="brand-accent">Dancescapes!</span></div>
+            <div class="hero-tagline" id="hero-tagline">Here's your social media snapshot for today.</div>
+        </div>
+        <div class="hero-totals">
+            <div>
+                <div class="hero-stat-val" id="total-followers">—</div>
+                <div class="hero-stat-lbl">Total Followers</div>
+            </div>
+            <div class="hero-divider"></div>
+            <div>
+                <div class="hero-stat-val accent">3</div>
+                <div class="hero-stat-lbl">Active Platforms</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ═══════════════════ MAIN ════════════════════ -->
 <div class="main">
 
-    <!-- API Notice -->
     <div class="api-notice" id="api-notice">
         ℹ️ &nbsp;Metrics API not reachable — showing locally saved data. Click any follower count to update manually.
     </div>
 
-    <!-- Platform Cards -->
     <div class="platform-cards" id="platform-cards"></div>
 
-    <!-- Tabs -->
     <div class="tab-bar">
-        <button class="tab-btn active" data-tab="calendar">This Week</button>
-        <button class="tab-btn" data-tab="metrics">Metrics Log</button>
+        <button class="tab-btn active" data-tab="calendar">📅 This Week</button>
+        <button class="tab-btn" data-tab="metrics">📊 Metrics Log</button>
         <button class="tab-btn" data-tab="growth">📈 Growth</button>
-        <button class="tab-btn" data-tab="ideas">Content Ideas</button>
-        <button class="tab-btn" data-tab="links">Quick Links</button>
+        <button class="tab-btn" data-tab="ideas">💡 Content Ideas</button>
+        <button class="tab-btn" data-tab="links">🔗 Quick Links</button>
     </div>
 
-    <!-- ── Calendar Tab ── -->
     <div class="tab-panel active" id="panel-calendar">
         <div class="panel-box">
             <div class="calendar-toolbar">
@@ -383,7 +404,6 @@
         </div>
     </div>
 
-    <!-- ── Metrics Log Tab ── -->
     <div class="tab-panel" id="panel-metrics">
         <div class="panel-box">
             <div class="metrics-toolbar">
@@ -403,7 +423,7 @@
                 </div>
                 <div class="form-notes form-field">
                     <label>Notes / Top Performing Post</label>
-                    <textarea id="f-notes" rows="2" placeholder="e.g. Recital reel got 450 views, posted Friday 6pm..."></textarea>
+                    <textarea id="f-notes" rows="2" placeholder="e.g. Recital reel got 450 views, posted Friday 6pm…"></textarea>
                 </div>
                 <button class="btn-gold" id="save-log-entry">Save Entry</button>
             </div>
@@ -411,12 +431,10 @@
         </div>
     </div>
 
-    <!-- ── Growth Tab ── -->
     <div class="tab-panel" id="panel-growth">
         <div class="panel-box" id="growth-panel-content"></div>
     </div>
 
-    <!-- ── Content Ideas Tab ── -->
     <div class="tab-panel" id="panel-ideas">
         <div class="panel-box">
             <div class="panel-title">Content Ideas &amp; Hashtags</div>
@@ -428,7 +446,6 @@
         </div>
     </div>
 
-    <!-- ── Quick Links Tab ── -->
     <div class="tab-panel" id="panel-links">
         <div class="panel-box">
             <div class="panel-title">Quick Links</div>
@@ -437,18 +454,14 @@
     </div>
 
     <div class="site-footer">
-        Dancescapes Performing Arts LLC · Endicott, NY ·
+        <strong>Dancescapes Performing Arts LLC</strong> · Endicott, NY ·
         Powered by <a href="https://myautomationpartner.com" target="_blank">My Automation Partner</a> ·
         All data saved locally in your browser
     </div>
 </div>
 
 <script>
-/* ═══════════════════════════════════════════════════════
-   DATA
-═══════════════════════════════════════════════════════ */
 const GOLD = '#c9a84c';
-
 const PLATFORMS = [
     { id: 'facebook',  name: 'Facebook',  color: '#1877F2', analyticsUrl: 'https://www.facebook.com/dancescapesperformingarts/insights',
       svgPath: 'M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z' },
@@ -459,27 +472,23 @@ const PLATFORMS = [
     { id: 'google',    name: 'Google',    color: '#34A853', analyticsUrl: 'https://business.google.com/',
       svgPath: 'M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm.25 4.5a7.45 7.45 0 0 1 5.27 2.17l-2.14 2.14a4.5 4.5 0 1 0 .52 6.25h-3.65v-3h6.75c.08.44.12.89.12 1.35A7.5 7.5 0 1 1 12.25 4.5z' },
 ];
-
 const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
-
 const CALENDAR_DATA = {
-    Monday:    { facebook: 'Studio tip or dance fact',             instagram: 'Reel: behind-the-scenes warm-up',  tiktok: 'Trending sound + dancers in class', google: '' },
-    Tuesday:   { facebook: 'Class spotlight photo',                instagram: '',                                  tiktok: '',                                 google: '' },
-    Wednesday: { facebook: '',                                      instagram: 'Carousel: age group class guide',  tiktok: 'Day-in-the-life at Dancescapes',    google: 'Reply to any new reviews' },
-    Thursday:  { facebook: 'Parent testimonial or review share',   instagram: 'Story poll (favorite style?)',      tiktok: '',                                 google: '' },
+    Monday:    { facebook: 'Studio tip or dance fact',              instagram: 'Reel: behind-the-scenes warm-up',     tiktok: 'Trending sound + dancers in class',       google: '' },
+    Tuesday:   { facebook: 'Class spotlight photo',                 instagram: '',                                    tiktok: '',                                        google: '' },
+    Wednesday: { facebook: '',                                       instagram: 'Carousel: age group class guide',     tiktok: 'Day-in-the-life at Dancescapes',          google: 'Reply to any new reviews' },
+    Thursday:  { facebook: 'Parent testimonial or review share',    instagram: 'Story poll (favorite style?)',         tiktok: '',                                        google: '' },
     Friday:    { facebook: 'Upcoming event / registration reminder',instagram: 'Reel or photo: performance highlight', tiktok: 'Student transformation or progress clip', google: '' },
-    Saturday:  { facebook: 'Weekend recap or student shoutout',    instagram: '',                                  tiktok: '',                                 google: '' },
-    Sunday:    { facebook: '',                                      instagram: 'Story: Sunday motivation quote',   tiktok: 'Fun challenge or duet',             google: '' },
+    Saturday:  { facebook: 'Weekend recap or student shoutout',     instagram: '',                                    tiktok: '',                                        google: '' },
+    Sunday:    { facebook: '',                                       instagram: 'Story: Sunday motivation quote',      tiktok: 'Fun challenge or duet',                   google: '' },
 };
-
 const CONTENT_IDEAS = [
-    { cat: 'Behind the Scenes', ideas: ['Studio tour walk-through (Reel/TikTok)','Costume reveal day','Recital rehearsal chaos','Teacher warm-up routine','Morning class setup'] },
-    { cat: 'Students & Families', ideas: ['First day vs. end of year comparison','Student of the month spotlight','"Why I dance" short interviews','Sibling pairs in class','Parent reaction at recital'] },
-    { cat: 'Classes & Styles', ideas: ['30-sec intro to each dance style','What age can my child start? (explainer)','Technique tip of the week from Nichole','A day in the life of a competitive dancer','Meet your instructor feature'] },
-    { cat: 'Seasonal & Events', ideas: ['Back-to-school registration reminder','Holiday performance teasers','Recital countdown posts','Summer intensive announcement','Year-end thank-you post'] },
-    { cat: 'Engagement', ideas: ['"Which style should YOUR child try?" quiz','Guess the style video','Fill-in-the-blank: My fav thing about dance is ___','Share a 5-star Google review as a graphic','Caption contest on a funny recital photo'] },
+    { cat: 'Behind the Scenes',  ideas: ['Studio tour walk-through (Reel/TikTok)','Costume reveal day','Recital rehearsal chaos','Teacher warm-up routine','Morning class setup'] },
+    { cat: 'Students & Families',ideas: ['First day vs. end of year comparison','Student of the month spotlight','"Why I dance" short interviews','Sibling pairs in class','Parent reaction at recital'] },
+    { cat: 'Classes & Styles',   ideas: ['30-sec intro to each dance style','What age can my child start? (explainer)','Technique tip of the week from Nichole','A day in the life of a competitive dancer','Meet your instructor feature'] },
+    { cat: 'Seasonal & Events',  ideas: ['Back-to-school registration reminder','Holiday performance teasers','Recital countdown posts','Summer intensive announcement','Year-end thank-you post'] },
+    { cat: 'Engagement',         ideas: ['"Which style should YOUR child try?" quiz','Guess the style video','Fill-in-the-blank: My fav thing about dance is ___','Share a 5-star Google review as a graphic','Caption contest on a funny recital photo'] },
 ];
-
 const HASHTAGS = {
     local:   '#endicottny #binghamtonny #southerntierny #triplecitieskids #upstateny',
     dance:   '#dancestudio #danceclass #dancekids #dancelife #danceteacher',
@@ -487,102 +496,75 @@ const HASHTAGS = {
     parents: '#dancemom #kidsactivities #kidsDANCE #dancerecital #recital',
     studio:  '#dancescapes #dancescapesperformingarts #endicottDANCE',
 };
-
 const QUICK_LINKS = [
-    { label: 'Metricool Dashboard',  url: 'https://app.metricool.com/',     desc: 'Analytics for all platforms',     color: '#6366f1' },
-    { label: 'Meta Business Suite',  url: 'https://business.facebook.com/', desc: 'FB + IG scheduling & inbox',      color: '#1877F2' },
-    { label: 'Google Business',      url: 'https://business.google.com/',   desc: 'Reviews & profile management',    color: '#34A853' },
-    { label: 'TikTok Studio',        url: 'https://www.tiktok.com/tiktokstudio', desc: 'TikTok analytics & scheduling', color: '#ffffff' },
-    { label: 'Dancescapes Website',  url: 'https://www.dancescapes.com',    desc: 'Your live website',               color: GOLD },
-    { label: 'Jackrabbit Portal',    url: 'https://app.jackrabbitclass.com/jr4.0/ParentPortal/Login?orgID=550308', desc: 'Class management & parent portal', color: '#e67e22' },
-    { label: 'Dancescapes Email',    url: 'https://outlook.office.com/mail/', desc: 'info@dancescapes.com inbox',    color: '#0078D4' },
-    { label: 'My Automation Partner',url: 'https://myautomationpartner.com', desc: 'Your automation dashboard',     color: GOLD },
+    { label: 'Metricool Dashboard',  url: 'https://app.metricool.com/',     desc: 'Analytics for all platforms',      color: '#6366f1', icon: '📊' },
+    { label: 'Meta Business Suite',  url: 'https://business.facebook.com/', desc: 'FB + IG scheduling & inbox',       color: '#1877F2', icon: '📘' },
+    { label: 'Google Business',      url: 'https://business.google.com/',   desc: 'Reviews & profile management',     color: '#34A853', icon: '⭐' },
+    { label: 'TikTok Studio',        url: 'https://www.tiktok.com/tiktokstudio', desc: 'TikTok analytics & scheduling', color: '#ffffff', icon: '🎵' },
+    { label: 'Dancescapes Website',  url: 'https://www.dancescapes.com',    desc: 'Your live website',                color: GOLD,      icon: '🌐' },
+    { label: 'Jackrabbit Portal',    url: 'https://app.jackrabbitclass.com/jr4.0/ParentPortal/Login?orgID=550308', desc: 'Class management & parent portal', color: '#e67e22', icon: '🐇' },
+    { label: 'Dancescapes Email',    url: 'https://outlook.office.com/mail/', desc: 'info@dancescapes.com inbox',     color: '#0078D4', icon: '✉️' },
+    { label: 'My Automation Partner',url: 'https://myautomationpartner.com', desc: 'Your automation dashboard',      color: GOLD,      icon: '⚡' },
 ];
 
-/* ═══════════════════════════════════════════════════════
-   STATE (localStorage-backed)
-═══════════════════════════════════════════════════════ */
-function loadState(key, def) {
-    try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : def; } catch { return def; }
-}
-function saveState(key, val) {
-    try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
-}
+function loadState(key, def) { try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : def; } catch { return def; } }
+function saveState(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
 
-let stats    = loadState('ds_stats', {});
-let posted   = loadState('ds_posted', {});
-let metrics  = loadState('ds_metrics', []);
-let weekOffset = 0;
+let stats       = loadState('ds_stats', {});
+let posted      = loadState('ds_posted', {});
+let metrics     = loadState('ds_metrics', []);
+let weekOffset  = 0;
 let activeLines = { facebook: true, instagram: true, tiktok: true };
 
-/* ═══════════════════════════════════════════════════════
-   HELPERS
-═══════════════════════════════════════════════════════ */
 function fmt(n) { return n != null && !isNaN(n) ? Math.round(n).toLocaleString() : '—'; }
-
 function timeAgo(iso) {
     if (!iso) return null;
     const d = Math.floor((Date.now() - new Date(iso)) / 60000);
-    if (d < 1) return 'just now';
-    if (d < 60) return d + 'm ago';
-    if (d < 1440) return Math.floor(d/60) + 'h ago';
-    if (d < 10080) return Math.floor(d/1440) + 'd ago';
+    if (d < 1) return 'just now'; if (d < 60) return d + 'm ago';
+    if (d < 1440) return Math.floor(d/60) + 'h ago'; if (d < 10080) return Math.floor(d/1440) + 'd ago';
     return new Date(iso).toLocaleDateString('en-US', { month:'short', day:'numeric' });
 }
-
 function getWeekDates(offset = 0) {
-    const now = new Date();
-    const day = now.getDay();
-    const monday = new Date(now);
+    const now = new Date(); const day = now.getDay(); const monday = new Date(now);
     monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1) + offset * 7);
     return DAYS.map((_, i) => { const d = new Date(monday); d.setDate(monday.getDate() + i); return d; });
 }
-
-function platformSVG(p, size = 16) {
-    return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="${p.color}"><path d="${p.svgPath}"/></svg>`;
-}
-
+function platformSVG(p, size = 16) { return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="${p.color}"><path d="${p.svgPath}"/></svg>`; }
 function copyText(text, el) {
-    try { navigator.clipboard.writeText(text); } catch {
-        const ta = document.createElement('textarea');
-        ta.value = text; document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); document.body.removeChild(ta);
-    }
-    if (el) {
-        const orig = el.textContent;
-        el.textContent = '✓ Copied'; el.classList.add('copied');
-        setTimeout(() => { el.textContent = orig; el.classList.remove('copied'); }, 2000);
-    }
+    try { navigator.clipboard.writeText(text); } catch { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); }
+    if (el) { const orig = el.textContent; el.textContent = '✓ Copied'; el.classList.add('copied'); setTimeout(() => { el.textContent = orig; el.classList.remove('copied'); }, 2000); }
 }
 
-/* ═══════════════════════════════════════════════════════
-   HEADER
-═══════════════════════════════════════════════════════ */
 function initHeader() {
     const now = new Date();
-    document.getElementById('header-date').textContent =
-        now.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+    document.getElementById('header-date').textContent = now.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+    const h = now.getHours();
+    const greeting = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('hero-greeting').innerHTML = `${greeting}, <span class="brand-accent">Dancescapes!</span>`;
+    const msgs = ["Here's your social media snapshot for today.", "Let's make today's content count. 💃", "Your audience is waiting — let's show up!", "Keep the momentum going!"];
+    document.getElementById('hero-tagline').textContent = msgs[now.getDay() % msgs.length];
 }
 
-/* ═══════════════════════════════════════════════════════
-   PLATFORM CARDS
-═══════════════════════════════════════════════════════ */
+function updateHeroTotals() {
+    const total = ['instagram','tiktok','facebook'].reduce((sum, pid) => sum + (stats[pid]?.followers || 0), 0);
+    const el = document.getElementById('total-followers');
+    if (el) el.textContent = total > 0 ? total.toLocaleString() : '—';
+}
+
 function renderPlatformCards() {
     const container = document.getElementById('platform-cards');
     container.innerHTML = PLATFORMS.map(p => {
         const s = stats[p.id] || { followers: 0, lastWeek: 0, weeklyReach: 0 };
         const change = (s.followers || 0) - (s.lastWeek || 0);
-        const changeHtml = change !== 0
-            ? `<span class="follower-change" style="color:${change > 0 ? '#4ade80' : '#f87171'}">${change > 0 ? '+' : ''}${change}</span>` : '';
-        const updatedHtml = s.updatedAt
-            ? `<div class="card-updated">Updated ${timeAgo(s.updatedAt)}</div>` : '';
-
+        const changeHtml = change !== 0 ? `<span class="follower-change" style="color:${change > 0 ? '#4ade80' : '#f87171'}">${change > 0 ? '+' : ''}${change.toLocaleString()}</span>` : '';
+        const updatedHtml = s.updatedAt ? `<div class="card-updated">Updated ${timeAgo(s.updatedAt)}</div>` : '';
         return `
         <div class="stat-card" id="card-${p.id}">
-            <div class="card-top-bar" style="background:linear-gradient(90deg,${p.color}88,${p.color}22)"></div>
+            <div class="card-glow" style="background:${p.color}"></div>
+            <div class="card-top-bar" style="background:linear-gradient(90deg,${p.color}cc,${p.color}22)"></div>
             <div class="card-header">
                 <div class="card-platform">
-                    <div class="platform-badge" style="background:${p.color}22">${platformSVG(p, 16)}</div>
+                    <div class="platform-badge" style="background:${p.color}18">${platformSVG(p, 18)}</div>
                     <span class="platform-name">${p.name}</span>
                 </div>
                 <a class="analytics-link" href="${p.analyticsUrl}" target="_blank" rel="noopener">Analytics ↗</a>
@@ -605,48 +587,31 @@ function renderPlatformCards() {
             ${updatedHtml}
         </div>`;
     }).join('');
+    updateHeroTotals();
 }
 
 function startEdit(pid) {
-    const s = stats[pid] || {};
-    const inp = document.getElementById(`edit-input-${pid}`);
-    const editRow = document.getElementById(`edit-${pid}`);
-    const valEl = document.getElementById(`fv-${pid}`);
-    inp.value = s.followers || 0;
-    valEl.style.display = 'none';
-    editRow.classList.add('active');
-    inp.focus(); inp.select();
+    const s = stats[pid] || {}; const inp = document.getElementById(`edit-input-${pid}`);
+    const editRow = document.getElementById(`edit-${pid}`); const valEl = document.getElementById(`fv-${pid}`);
+    inp.value = s.followers || 0; valEl.style.display = 'none'; editRow.classList.add('active'); inp.focus(); inp.select();
 }
-
 function commitEdit(pid) {
-    const inp = document.getElementById(`edit-input-${pid}`);
-    const val = parseInt(inp.value) || 0;
+    const inp = document.getElementById(`edit-input-${pid}`); const val = parseInt(inp.value) || 0;
     const s = stats[pid] || { followers: 0, lastWeek: 0, weeklyReach: 0 };
     stats[pid] = { ...s, lastWeek: s.followers || 0, followers: val, updatedAt: new Date().toISOString() };
-    saveState('ds_stats', stats);
-    renderPlatformCards();
+    saveState('ds_stats', stats); renderPlatformCards();
 }
-
 function editKey(e, pid) {
     if (e.key === 'Enter') commitEdit(pid);
-    if (e.key === 'Escape') {
-        document.getElementById(`edit-${pid}`).classList.remove('active');
-        document.getElementById(`fv-${pid}`).style.display = '';
-    }
+    if (e.key === 'Escape') { document.getElementById(`edit-${pid}`).classList.remove('active'); document.getElementById(`fv-${pid}`).style.display = ''; }
 }
-
 function editReach(pid) {
-    const s = stats[pid] || {};
-    const v = prompt('Weekly reach:', s.weeklyReach || 0);
+    const s = stats[pid] || {}; const v = prompt('Weekly reach:', s.weeklyReach || 0);
     if (v === null) return;
     stats[pid] = { ...s, weeklyReach: parseInt(v) || 0, updatedAt: new Date().toISOString() };
-    saveState('ds_stats', stats);
-    renderPlatformCards();
+    saveState('ds_stats', stats); renderPlatformCards();
 }
 
-/* ═══════════════════════════════════════════════════════
-   TABS
-═══════════════════════════════════════════════════════ */
 document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -657,313 +622,170 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
 });
 
-/* ═══════════════════════════════════════════════════════
-   CALENDAR
-═══════════════════════════════════════════════════════ */
 function renderCalendar() {
-    const dates = getWeekDates(weekOffset);
-    const today = new Date();
-    const weekKey = `week_${weekOffset}`;
-
-    // Week label
+    const dates = getWeekDates(weekOffset); const today = new Date(); const weekKey = `week_${weekOffset}`;
     const lbl = document.getElementById('week-label');
     lbl.textContent = weekOffset === 0 ? 'This Week' : weekOffset > 0 ? `+${weekOffset}w` : `${weekOffset}w`;
     document.getElementById('cal-today').style.display = weekOffset !== 0 ? '' : 'none';
-
     const grid = document.getElementById('calendar-grid');
     grid.innerHTML = DAYS.map((day, i) => {
-        const d = dates[i];
-        const isToday = d.toDateString() === today.toDateString();
-        const isPast = d < today && !isToday;
+        const d = dates[i]; const isToday = d.toDateString() === today.toDateString(); const isPast = d < today && !isToday;
         const items = Object.entries(CALENDAR_DATA[day]).filter(([, v]) => v);
-
-        const postsHtml = items.length === 0
-            ? '<div class="rest-day">Rest day</div>'
+        const postsHtml = items.length === 0 ? '<div class="rest-day">Rest day</div>'
             : items.map(([pid, text]) => {
-                const pl = PLATFORMS.find(p => p.id === pid);
-                const key = `${weekKey}_${day}_${pid}`;
-                const isDone = !!posted[key];
-                return `
-                <div class="cal-post${isDone ? ' done' : ''}" onclick="togglePost('${key}')">
-                    <div class="post-check" style="border:${isDone ? 'none' : `1px solid ${pl.color}44`};background:${isDone ? pl.color : 'transparent'}">${isDone ? '✓' : ''}</div>
-                    <div>
-                        <div class="post-platform-tag" style="color:${pl.color}">${pid.slice(0,2).toUpperCase()}</div>
-                        <div class="post-text${isDone ? ' done' : ''}">${text}</div>
-                    </div>
-                </div>`;
+                const pl = PLATFORMS.find(p => p.id === pid); const key = `${weekKey}_${day}_${pid}`; const isDone = !!posted[key];
+                return `<div class="cal-post${isDone ? ' done' : ''}" onclick="togglePost('${key}')">
+                    <div class="post-check" style="border:${isDone ? 'none' : `1.5px solid ${pl.color}55`};background:${isDone ? pl.color : 'transparent'}">${isDone ? '✓' : ''}</div>
+                    <div><div class="post-platform-tag" style="color:${pl.color}">${pid.slice(0,2).toUpperCase()}</div>
+                    <div class="post-text${isDone ? ' done' : ''}">${text}</div></div></div>`;
             }).join('');
-
-        return `
-        <div class="cal-day${isToday ? ' today' : ''}${isPast ? ' past' : ''}">
+        return `<div class="cal-day${isToday ? ' today' : ''}${isPast ? ' past' : ''}">
             <div class="cal-day-name">${day.slice(0,3)}</div>
-            <div class="cal-date">${d.getDate()}</div>
-            ${postsHtml}
-        </div>`;
+            <div class="cal-date">${d.getDate()}</div>${postsHtml}</div>`;
     }).join('');
-
-    // Legend
-    const legend = document.getElementById('cal-legend');
-    legend.innerHTML = PLATFORMS.map(p =>
+    document.getElementById('cal-legend').innerHTML = PLATFORMS.map(p =>
         `<div class="legend-item"><div class="legend-dot" style="background:${p.color}"></div><span class="legend-text">${p.name}</span></div>`
-    ).join('') + '<span class="legend-hint">Click any item to mark posted</span>';
+    ).join('') + '<span class="legend-hint">Click any item to mark as posted ✓</span>';
 }
-
-function togglePost(key) {
-    posted[key] = !posted[key];
-    saveState('ds_posted', posted);
-    renderCalendar();
-}
-
+function togglePost(key) { posted[key] = !posted[key]; saveState('ds_posted', posted); renderCalendar(); }
 document.getElementById('cal-prev').onclick  = () => { weekOffset--; renderCalendar(); };
 document.getElementById('cal-next').onclick  = () => { weekOffset++; renderCalendar(); };
 document.getElementById('cal-today').onclick = () => { weekOffset = 0; renderCalendar(); };
 
-/* ═══════════════════════════════════════════════════════
-   METRICS LOG
-═══════════════════════════════════════════════════════ */
 const logFormEl = document.getElementById('log-form');
 const toggleBtn = document.getElementById('toggle-log-form');
-
 toggleBtn.onclick = () => {
     const open = logFormEl.classList.toggle('visible');
     toggleBtn.textContent = open ? 'Cancel' : '+ Log This Week';
     toggleBtn.className = open ? 'btn-ghost' : 'btn-gold';
 };
-
 document.getElementById('save-log-entry').onclick = () => {
     const week = document.getElementById('f-week').value;
     if (!week) { alert('Please select a week date.'); return; }
-    const entry = {
-        id: Date.now(), week,
-        fb_followers: document.getElementById('f-fb-f').value,
-        fb_reach:     document.getElementById('f-fb-r').value,
-        ig_followers: document.getElementById('f-ig-f').value,
-        ig_reach:     document.getElementById('f-ig-r').value,
-        tt_followers: document.getElementById('f-tt-f').value,
-        tt_views:     document.getElementById('f-tt-v').value,
-        reviews:      document.getElementById('f-reviews').value,
-        notes:        document.getElementById('f-notes').value,
-    };
-    metrics.push(entry);
-    saveState('ds_metrics', metrics);
-    // Reset form
+    const entry = { id: Date.now(), week,
+        fb_followers: document.getElementById('f-fb-f').value, fb_reach: document.getElementById('f-fb-r').value,
+        ig_followers: document.getElementById('f-ig-f').value, ig_reach: document.getElementById('f-ig-r').value,
+        tt_followers: document.getElementById('f-tt-f').value, tt_views: document.getElementById('f-tt-v').value,
+        reviews: document.getElementById('f-reviews').value,   notes: document.getElementById('f-notes').value };
+    metrics.push(entry); saveState('ds_metrics', metrics);
     ['f-week','f-fb-f','f-fb-r','f-ig-f','f-ig-r','f-tt-f','f-tt-v','f-reviews','f-notes'].forEach(id => document.getElementById(id).value = '');
-    logFormEl.classList.remove('visible');
-    toggleBtn.textContent = '+ Log This Week'; toggleBtn.className = 'btn-gold';
+    logFormEl.classList.remove('visible'); toggleBtn.textContent = '+ Log This Week'; toggleBtn.className = 'btn-gold';
     renderMetricsTable();
 };
-
 function renderMetricsTable() {
     const wrap = document.getElementById('metrics-table-wrap');
     if (metrics.length === 0) {
-        wrap.innerHTML = '<div class="empty-state">No metrics logged yet. Click "Log This Week" after each week to track your growth.</div>';
+        wrap.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><div class="empty-state-text">No metrics logged yet.<br>Click <strong>+ Log This Week</strong> after each week to track your growth over time.</div></div>';
         return;
     }
     const headers = ['Week','FB Followers','FB Reach','IG Followers','IG Reach','TT Followers','TT Views','Reviews','Notes'];
-    const rows = [...metrics].reverse().map((m, i) => {
+    const rows = [...metrics].reverse().map(m => {
         const nums = [m.fb_followers, m.fb_reach, m.ig_followers, m.ig_reach, m.tt_followers, m.tt_views, m.reviews];
-        return `<tr>
-            <td style="color:#ccc;white-space:nowrap">${m.week}</td>
+        return `<tr><td style="color:#ccc;white-space:nowrap">${m.week}</td>
             ${nums.map(v => `<td class="num">${v ? parseInt(v).toLocaleString() : '—'}</td>`).join('')}
-            <td style="color:rgba(232,224,213,0.5);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.notes || '—'}</td>
-        </tr>`;
+            <td style="color:rgba(240,232,223,0.45);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.notes || '—'}</td></tr>`;
     }).join('');
     wrap.innerHTML = `<div class="table-wrap"><table class="data-table"><thead><tr>${headers.map((h,i) => `<th${i>0&&i<8?' class="num"':''}>${h}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
-/* ═══════════════════════════════════════════════════════
-   GROWTH CHART
-═══════════════════════════════════════════════════════ */
 const SERIES = [
     { key: 'fb_followers', id: 'facebook',  label: 'Facebook',  color: '#1877F2' },
     { key: 'ig_followers', id: 'instagram', label: 'Instagram', color: '#E1306C' },
-    { key: 'tt_followers', id: 'tiktok',    label: 'TikTok',    color: '#ffffff' },
+    { key: 'tt_followers', id: 'tiktok',    label: 'TikTok',    color: '#aaaaaa' },
 ];
-
 function renderGrowth() {
     const panel = document.getElementById('growth-panel-content');
     const sorted = [...metrics].sort((a,b) => new Date(a.week)-new Date(b.week));
-
     const togglesHtml = SERIES.map(s => {
         const on = activeLines[s.id];
-        return `<button class="toggle-btn" onclick="toggleLine('${s.id}')" style="background:${on ? s.color+'22' : '#1a1a1a'};border-color:${on ? s.color+'66' : '#333'};color:${on ? s.color : '#555'}">
-            <div class="toggle-dot" style="background:${on ? s.color : '#333'}"></div>${s.label}
-        </button>`;
+        return `<button class="toggle-btn" onclick="toggleLine('${s.id}')" style="background:${on ? s.color+'1a' : '#1a1a1a'};border-color:${on ? s.color+'55' : '#2a2a2a'};color:${on ? s.color : '#555'}">
+            <div class="toggle-dot" style="background:${on ? s.color : '#333'}"></div>${s.label}</button>`;
     }).join('');
-
     if (sorted.length < 2) {
-        panel.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-            <div class="panel-title" style="margin-bottom:0">Follower Growth History</div>
-            <div class="chart-toggles">${togglesHtml}</div>
-        </div>
-        <div class="chart-empty">
-            <div class="icon">📈</div>
-            <div class="title">No chart data yet</div>
-            <div>Log at least 2 weeks in the Metrics Log to see your growth chart here.</div>
-        </div>`;
+        panel.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px"><div class="panel-title" style="margin-bottom:0">Follower Growth History</div><div class="chart-toggles">${togglesHtml}</div></div>
+        <div class="chart-empty"><div class="icon">📈</div><div class="title">No chart data yet</div><p>Log at least 2 weeks in the Metrics Log tab to see your growth chart here.</p></div>`;
         return;
     }
-
     const W = 860, H = 280, PAD = { top: 24, right: 24, bottom: 48, left: 64 };
-    const iW = W - PAD.left - PAD.right, iH = H - PAD.top - PAD.bottom;
-    const n = sorted.length;
+    const iW = W - PAD.left - PAD.right, iH = H - PAD.top - PAD.bottom, n = sorted.length;
     const activeVals = sorted.flatMap(m => SERIES.filter(s => activeLines[s.id]).map(s => parseInt(m[s.key]) || 0)).filter(v => v > 0);
     const maxVal = activeVals.length ? Math.ceil(Math.max(...activeVals) * 1.1) : 100;
-    const xSc = i => (i / Math.max(n-1,1)) * iW;
-    const ySc = v => iH - (v / maxVal) * iH;
+    const xSc = i => (i / Math.max(n-1,1)) * iW, ySc = v => iH - (v / maxVal) * iH;
     const fmtDate = d => { const dt = new Date(d); return `${dt.getMonth()+1}/${dt.getDate()}`; };
-    const fmtNum  = v => v >= 1000 ? (v/1000).toFixed(1)+'k' : String(v);
-    const yTicks  = [0,0.25,0.5,0.75,1].map(t => Math.round(maxVal * t));
-
-    const gridLines = yTicks.map(v => `
-        <line x1="0" y1="${ySc(v)}" x2="${iW}" y2="${ySc(v)}" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-        <text x="-10" y="${ySc(v)+4}" text-anchor="end" fill="rgba(232,224,213,0.3)" font-size="10">${fmtNum(v)}</text>`).join('');
-
-    const xLabels = sorted.map((m,i) => `<text x="${xSc(i)}" y="${iH+18}" text-anchor="middle" fill="rgba(232,224,213,0.35)" font-size="10">${fmtDate(m.week)}</text>`).join('');
-
+    const fmtNum = v => v >= 1000 ? (v/1000).toFixed(1)+'k' : String(v);
+    const yTicks = [0,0.25,0.5,0.75,1].map(t => Math.round(maxVal * t));
+    const gridLines = yTicks.map(v => `<line x1="0" y1="${ySc(v)}" x2="${iW}" y2="${ySc(v)}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/><text x="-10" y="${ySc(v)+4}" text-anchor="end" fill="rgba(240,232,223,0.28)" font-size="10">${fmtNum(v)}</text>`).join('');
+    const xLabels = sorted.map((m,i) => `<text x="${xSc(i)}" y="${iH+18}" text-anchor="middle" fill="rgba(240,232,223,0.3)" font-size="10">${fmtDate(m.week)}</text>`).join('');
     const seriesSvg = SERIES.filter(s => activeLines[s.id]).map(s => {
         const pts = sorted.map((m,i) => { const v = parseInt(m[s.key])||0; return v ? [xSc(i), ySc(v)] : null; }).filter(Boolean);
         if (pts.length < 2) return '';
-        const linePath  = pts.map((p,i) => `${i===0?'M':'L'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
-        const areaPath  = `${linePath} L${pts[pts.length-1][0].toFixed(1)},${iH} L${pts[0][0].toFixed(1)},${iH} Z`;
-        const dots = pts.map(p => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.5" fill="${s.color}" fill-opacity="0.9"/>`).join('');
-        return `<path d="${areaPath}" fill="${s.color}" fill-opacity="0.06"/>
-                <path d="${linePath}" fill="none" stroke="${s.color}" stroke-width="2" stroke-opacity="0.85" stroke-linejoin="round" stroke-linecap="round"/>
-                ${dots}`;
+        const lp = pts.map((p,i) => `${i===0?'M':'L'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ');
+        const ap = `${lp} L${pts[pts.length-1][0].toFixed(1)},${iH} L${pts[0][0].toFixed(1)},${iH} Z`;
+        return `<path d="${ap}" fill="${s.color}" fill-opacity="0.05"/>
+                <path d="${lp}" fill="none" stroke="${s.color}" stroke-width="2" stroke-opacity="0.8" stroke-linejoin="round" stroke-linecap="round"/>
+                ${pts.map(p => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.5" fill="${s.color}" fill-opacity="0.9"/>`).join('')}`;
     }).join('');
-
     const summaryCards = SERIES.map(s => {
         const vals = sorted.map(m => parseInt(m[s.key])||0).filter(v=>v>0);
         if (vals.length < 2) return '';
-        const growth = vals[vals.length-1] - vals[0];
-        const pct = vals[0] > 0 ? ((growth/vals[0])*100).toFixed(1) : '—';
-        return `<div class="growth-card" style="border:1px solid ${s.color}22">
-            <div class="growth-card-head"><div class="growth-dot" style="background:${s.color}"></div><span class="growth-platform">${s.label}</span></div>
+        const growth = vals[vals.length-1] - vals[0]; const pct = vals[0] > 0 ? ((growth/vals[0])*100).toFixed(1) : '—';
+        return `<div class="growth-card" style="border-color:${s.color}22"><div class="growth-card-head"><div class="growth-dot" style="background:${s.color}"></div><span class="growth-platform">${s.label}</span></div>
             <div class="growth-followers">${vals[vals.length-1].toLocaleString()}</div>
-            <div class="growth-delta" style="color:${growth>=0?'#4ade80':'#f87171'}">${growth>=0?'+':''}${growth.toLocaleString()} followers (${pct}%)</div>
-            <div class="growth-weeks">over ${vals.length} weeks tracked</div>
-        </div>`;
+            <div class="growth-delta" style="color:${growth>=0?'#4ade80':'#f87171'}">${growth>=0?'+':''}${growth.toLocaleString()} (${pct}%)</div>
+            <div class="growth-weeks">over ${vals.length} weeks tracked</div></div>`;
     }).join('');
-
-    panel.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-            <div class="panel-title" style="margin-bottom:0">Follower Growth History</div>
-            <div class="chart-toggles" id="chart-toggles">${togglesHtml}</div>
-        </div>
-        <div class="chart-wrap">
-            <svg viewBox="0 0 ${W} ${H}">
-                <g transform="translate(${PAD.left},${PAD.top})">${gridLines}${xLabels}${seriesSvg}</g>
-            </svg>
-        </div>
+    panel.innerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:12px"><div class="panel-title" style="margin-bottom:0">Follower Growth History</div><div class="chart-toggles">${togglesHtml}</div></div>
+        <div class="chart-wrap"><svg viewBox="0 0 ${W} ${H}"><g transform="translate(${PAD.left},${PAD.top})">${gridLines}${xLabels}${seriesSvg}</g></svg></div>
         <div class="growth-summary">${summaryCards}</div>`;
 }
+function toggleLine(id) { activeLines[id] = !activeLines[id]; renderGrowth(); }
 
-function toggleLine(id) {
-    activeLines[id] = !activeLines[id];
-    renderGrowth();
-}
-
-/* ═══════════════════════════════════════════════════════
-   CONTENT IDEAS
-═══════════════════════════════════════════════════════ */
 function renderContentIdeas() {
-    const grid = document.getElementById('ideas-grid');
-    grid.innerHTML = CONTENT_IDEAS.map(cat => `
-        <div class="idea-category">
-            <div class="idea-cat-title">${cat.cat}</div>
-            ${cat.ideas.map(idea => `
-                <div class="idea-item" onclick="copyIdea(this,'${idea.replace(/'/g,"\\'")}')">
-                    <span>${idea}</span>
-                    <span class="copy-hint">Copy</span>
-                </div>`).join('')}
-        </div>`).join('');
-
-    const rows = document.getElementById('hashtag-rows');
-    rows.innerHTML = Object.entries(HASHTAGS).map(([label, tags]) => `
+    document.getElementById('ideas-grid').innerHTML = CONTENT_IDEAS.map(cat => `
+        <div class="idea-category"><div class="idea-cat-title">${cat.cat}</div>
+        ${cat.ideas.map(idea => `<div class="idea-item" onclick="copyIdea(this,'${idea.replace(/'/g,"\\'")}')"><span>${idea}</span><span class="copy-hint">Copy</span></div>`).join('')}</div>`).join('');
+    document.getElementById('hashtag-rows').innerHTML = Object.entries(HASHTAGS).map(([label, tags]) => `
         <div class="hashtag-row" onclick="copyHashtag(this,'${tags.replace(/'/g,"\\'")}')">
-            <span class="hashtag-label">${label}</span>
-            <span class="hashtag-tags">${tags}</span>
-            <span class="hashtag-copy">📋 Copy</span>
-        </div>`).join('');
+            <span class="hashtag-label">${label}</span><span class="hashtag-tags">${tags}</span><span class="hashtag-copy">📋 Copy</span></div>`).join('');
 }
-
-function copyIdea(el, text) {
-    const hint = el.querySelector('.copy-hint');
-    copyText(text, hint);
-}
-
+function copyIdea(el, text) { copyText(text, el.querySelector('.copy-hint')); }
 function copyHashtag(el, text) {
-    const hint = el.querySelector('.hashtag-copy');
-    const origText = hint.textContent;
-    copyText(text);
-    el.classList.add('copied'); hint.textContent = '✓ Copied!'; hint.classList.add('copied');
+    const hint = el.querySelector('.hashtag-copy'), origText = hint.textContent;
+    copyText(text); el.classList.add('copied'); hint.textContent = '✓ Copied!'; hint.classList.add('copied');
     setTimeout(() => { el.classList.remove('copied'); hint.textContent = origText; hint.classList.remove('copied'); }, 2000);
 }
 
-/* ═══════════════════════════════════════════════════════
-   QUICK LINKS
-═══════════════════════════════════════════════════════ */
 function renderQuickLinks() {
     document.getElementById('links-grid').innerHTML = QUICK_LINKS.map(l => `
         <a class="quick-link" href="${l.url}" target="_blank" rel="noopener"
-           onmouseenter="this.style.borderColor='${l.color}55'" onmouseleave="this.style.borderColor='rgba(255,255,255,0.06)'">
-            <div class="link-dot" style="background:${l.color}"></div>
-            <div>
-                <div class="link-label">${l.label}</div>
-                <div class="link-desc">${l.desc}</div>
-            </div>
-            <span class="link-arrow">↗</span>
-        </a>`).join('');
+           style="border-color:var(--border)"
+           onmouseenter="this.style.borderColor='${l.color}44'" onmouseleave="this.style.borderColor='var(--border)'">
+            <div class="link-icon" style="background:${l.color}18">${l.icon}</div>
+            <div><div class="link-label">${l.label}</div><div class="link-desc">${l.desc}</div></div>
+            <span class="link-arrow">↗</span></a>`).join('');
 }
 
-/* ═══════════════════════════════════════════════════════
-   API SYNC (tries Metricool endpoint, falls back to local)
-═══════════════════════════════════════════════════════ */
 function syncFromApi() {
-    const badge = document.getElementById('api-badge');
-    const dot   = document.getElementById('api-dot');
-    const lbl   = document.getElementById('api-label');
-    badge.style.display = 'flex';
-    dot.style.background = '#555'; lbl.textContent = 'Syncing…';
-
+    const badge = document.getElementById('api-badge'), dot = document.getElementById('api-dot'), lbl = document.getElementById('api-label');
+    badge.style.display = 'flex'; dot.className = 'api-dot'; dot.style.background = '#444'; lbl.textContent = 'Syncing…';
     fetch('https://n8n.myautomationpartner.com/webhook/metrics/dancescapes?t=' + Date.now())
         .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
         .then(data => {
             const map = { instagram: 'instagram', tiktok: 'tiktok', facebook: 'facebook',
                           followers_instagram: 'instagram', followers_tiktok: 'tiktok', followers_facebook: 'facebook' };
-            Object.entries(data).forEach(([k, v]) => {
-                const pid = map[k];
-                if (pid) {
-                    const s = stats[pid] || {};
-                    stats[pid] = { ...s, followers: v, updatedAt: new Date().toISOString() };
-                }
-            });
-            saveState('ds_stats', stats);
-            renderPlatformCards();
-            dot.style.background = '#4ade80'; lbl.style.color = '#4ade80'; lbl.textContent = 'Live data';
+            Object.entries(data).forEach(([k, v]) => { const pid = map[k]; if (pid && typeof v === 'number') { const s = stats[pid] || {}; stats[pid] = { ...s, followers: v, updatedAt: new Date().toISOString() }; } });
+            saveState('ds_stats', stats); renderPlatformCards();
+            dot.className = 'api-dot live'; dot.style.background = '#4ade80'; lbl.style.color = '#4ade80'; lbl.textContent = 'Live data';
+            badge.style.borderColor = 'rgba(74,222,128,0.2)';
         })
         .catch(() => {
-            dot.style.background = '#555'; lbl.style.color = 'rgba(232,224,213,0.35)'; lbl.textContent = 'Manual mode';
+            dot.style.background = '#555'; lbl.style.color = 'var(--text-dim)'; lbl.textContent = 'Manual mode';
             document.getElementById('api-notice').style.display = 'flex';
         });
 }
 
-/* ═══════════════════════════════════════════════════════
-   INIT
-═══════════════════════════════════════════════════════ */
-initHeader();
-renderPlatformCards();
-renderCalendar();
-renderMetricsTable();
-renderContentIdeas();
-renderQuickLinks();
-syncFromApi();
-
-// Auto-refresh every 5 minutes
+initHeader(); renderPlatformCards(); renderCalendar(); renderMetricsTable(); renderContentIdeas(); renderQuickLinks(); syncFromApi();
 setInterval(syncFromApi, 5 * 60 * 1000);
-
-// Refresh on tab visibility
 document.addEventListener('visibilitychange', () => { if (!document.hidden) syncFromApi(); });
 </script>
 </body>
