@@ -45,11 +45,36 @@
         input, textarea, select { font-family: inherit; }
         a { cursor: pointer; }
 
+        /* ─── Mobile UX: disable text selection on UI chrome ─────── */
+        /* Makes the app feel native — users can't accidentally        */
+        /* highlight labels and buttons when tapping/scrolling.       */
+        /* Inbox message text & reply inputs opt back in below.       */
+        body { -webkit-user-select: none; user-select: none; }
+        .inbox-msg-text, .inbox-thread-bubble, textarea, input[type="text"] {
+            -webkit-user-select: text; user-select: text;
+        }
+
+        /* ─── Mobile UX: minimum 44×44px touch targets ───────────── */
+        button, .nav-tab, .inbox-filter-btn, .sidebar-link, .platform-card {
+            min-height: 44px;
+        }
+
+        /* ─── Safe-Area Insets (Capacitor / mobile notch & gesture bar) ── */
+        /* These CSS variables are set by the browser/WebView automatically.    */
+        /* They ensure content is never hidden under the iPhone notch,          */
+        /* Android status bar, or gesture navigation bar.                       */
+        :root {
+            --sat: env(safe-area-inset-top, 0px);
+            --sar: env(safe-area-inset-right, 0px);
+            --sab: env(safe-area-inset-bottom, 0px);
+            --sal: env(safe-area-inset-left, 0px);
+        }
+
         /* ─── Header ─────────────────────────────────────────────── */
         #site-header {
             background: var(--bg-header); border-bottom: 1px solid var(--gold-border);
-            padding: 0 24px; position: sticky; top: 0; z-index: 200;
-            backdrop-filter: blur(16px); height: var(--header-h);
+            padding: 0 24px; padding-top: var(--sat); position: sticky; top: 0; z-index: 200;
+            backdrop-filter: blur(16px); height: calc(var(--header-h) + var(--sat));
         }
         .header-inner {
             max-width: 100%; display: flex; align-items: center; justify-content: space-between; height: 100%;
@@ -106,7 +131,7 @@
         .hero-stat-lbl { font-size: 10px; color: var(--text-faint); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 3px; }
 
         /* ─── App body (sidebar + content) ───────────────────────── */
-        .app-body { display: flex; align-items: flex-start; min-height: calc(100vh - var(--header-h)); }
+        .app-body { display: flex; align-items: flex-start; min-height: calc(100vh - var(--header-h)); padding-bottom: var(--sab); padding-left: var(--sal); padding-right: var(--sar); }
 
         /* ─── Sidebar ────────────────────────────────────────────── */
         .sidebar {
@@ -1387,6 +1412,90 @@ initInbox();
 syncFromApi();
 setInterval(syncFromApi, 5 * 60 * 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) syncFromApi(); });
+
+/* ═══════════════════════════════════════════════════════
+   CAPACITOR MOBILE PLUGINS
+   Runs only inside a native Capacitor shell (Android/iOS).
+   Gracefully no-ops in a regular browser.
+═══════════════════════════════════════════════════════ */
+(async () => {
+    // Guard: only run when wrapped in Capacitor
+    if (typeof window.Capacitor === 'undefined' || !window.Capacitor.isNativePlatform()) return;
+
+    const { Capacitor } = window;
+
+    // ── @capacitor/status-bar ──────────────────────────────
+    // Set dark icons on light background / light icons on dark background.
+    // The portal uses a dark theme so we want LIGHT icons.
+    try {
+        const { StatusBar, Style } = await import('https://unpkg.com/@capacitor/status-bar@8.0.2/dist/esm/index.js').catch(() => null) ?? {};
+        if (StatusBar) {
+            await StatusBar.setStyle({ style: Style?.Dark ?? 'DARK' });
+            // On Android, make status bar background transparent so it blends with header
+            if (Capacitor.getPlatform() === 'android') {
+                await StatusBar.setBackgroundColor({ color: '#1a1a2e' });
+            }
+        }
+    } catch (e) { console.warn('[Capacitor] StatusBar init failed:', e.message); }
+
+    // ── @capawesome/capacitor-android-edge-to-edge-support ─
+    // Enables edge-to-edge display on Android 15+.
+    // CSS env(safe-area-inset-*) handles the actual spacing.
+    try {
+        if (Capacitor.getPlatform() === 'android') {
+            const EdgeToEdge = (await import('https://unpkg.com/@capawesome/capacitor-android-edge-to-edge-support@8.0.6/dist/esm/index.js').catch(() => null))?.EdgeToEdge;
+            if (EdgeToEdge) await EdgeToEdge.enable();
+        }
+    } catch (e) { console.warn('[Capacitor] EdgeToEdge init failed:', e.message); }
+
+    // ── @capacitor/app ─────────────────────────────────────
+    // Handle Android hardware back button:
+    //   • If inbox panel is open → close it and go back to dashboard
+    //   • Otherwise → minimize app (do NOT exit — standard Android UX)
+    try {
+        const { App } = await import('https://unpkg.com/@capacitor/app@8.1.0/dist/esm/index.js').catch(() => null) ?? {};
+        if (App) {
+            App.addListener('backButton', ({ canGoBack }) => {
+                const inboxTab = document.getElementById('inbox-tab');
+                const inboxVisible = inboxTab && !inboxTab.classList.contains('hidden');
+                if (inboxVisible) {
+                    // Close inbox → show dashboard
+                    document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+                    document.getElementById('dashboard-tab')?.classList.remove('hidden');
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelector('.nav-tab[data-tab="dashboard"]')?.classList.add('active');
+                } else {
+                    // Minimize app instead of exiting
+                    App.minimizeApp();
+                }
+            });
+            console.log('[Capacitor] App back-button handler registered.');
+        }
+    } catch (e) { console.warn('[Capacitor] App plugin init failed:', e.message); }
+
+    // ── @capacitor-firebase/messaging ──────────────────────
+    // Request push notification permission and log the FCM token.
+    // The token should be sent to your backend to store per-device.
+    try {
+        const { FirebaseMessaging } = await import('https://unpkg.com/@capacitor-firebase/messaging@8.2.0/dist/esm/index.js').catch(() => null) ?? {};
+        if (FirebaseMessaging) {
+            const { receive } = await FirebaseMessaging.requestPermissions();
+            if (receive === 'granted') {
+                const { token } = await FirebaseMessaging.getToken();
+                console.log('[Capacitor] FCM token:', token);
+                // TODO: POST token to n8n or D1 to associate with this client portal session
+                // Example: fetch(`${INBOX_API_URL}/fcm-token`, { method: 'POST', body: JSON.stringify({ token, blogId: INBOX_BLOG_ID }) })
+            }
+            // Listen for foreground push messages → update inbox badge
+            FirebaseMessaging.addListener('notificationReceived', (notification) => {
+                console.log('[Capacitor] Push received:', notification);
+                pollInboxBadge();
+            });
+        }
+    } catch (e) { console.warn('[Capacitor] Firebase Messaging init failed:', e.message); }
+
+    console.log('[Capacitor] Mobile plugin initialization complete.');
+})();
 </script>
 </body>
 </html>
