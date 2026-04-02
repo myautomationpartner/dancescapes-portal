@@ -2,8 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ── Viewport: cover entire screen edge-to-edge on mobile ── -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Dancescapes — Social Media Command Center</title>
+
+    <!-- ── PWA: Web App Manifest ─────────────────────────────── -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- ── PWA: Theme & Status Bar Colors ───────────────────── -->
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="msapplication-TileColor" content="#1a1a2e">
+    <meta name="msapplication-TileImage" content="/assets/icon.png">
+
+    <!-- ── PWA: iOS / Safari "Add to Home Screen" ────────────── -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dancescapes">
+    <link rel="apple-touch-icon" href="/assets/icon.png">
+    <!-- iOS splash screen meta (add more sizes for full iOS coverage) -->
+    <link rel="apple-touch-startup-image" href="/assets/icon.png">
+
+    <!-- ── PWA: Android / Chrome ─────────────────────────────── -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Dancescapes">
+
+    <!-- ── SEO & Social ──────────────────────────────────────── -->
+    <meta name="description" content="Dancescapes Performing Arts — Social Media Command Center. Manage metrics, inbox, and content calendar.">
+    <meta name="robots" content="noindex, nofollow">
+
+    <!-- ── Icons ─────────────────────────────────────────────── -->
+    <link rel="icon" type="image/svg+xml" href="/assets/icon.svg">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/icon.png">
+
+    <!-- ── Fonts ─────────────────────────────────────────────── -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -475,6 +506,11 @@
                 <span>💬</span>
                 <span id="header-inbox-label">Unified Inbox</span>
                 <span class="inbox-badge" id="inbox-badge">0</span>
+            </button>
+            <!-- PWA Install Banner — hidden until browser fires beforeinstallprompt -->
+            <button id="pwa-install-banner" onclick="triggerPWAInstall()" title="Install as App"
+                style="display:none; align-items:center; gap:6px; background:linear-gradient(135deg,rgba(201,168,76,0.18),rgba(201,168,76,0.08)); border:1px solid rgba(201,168,76,0.35); border-radius:20px; color:var(--gold); font-size:11px; font-weight:600; padding:5px 12px; cursor:pointer; letter-spacing:0.04em;">
+                📲 <span>Install App</span>
             </button>
             <div class="api-badge" id="api-badge" style="display:none">
                 <div class="api-dot" id="api-dot"></div>
@@ -1496,6 +1532,56 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) sync
 
     console.log('[Capacitor] Mobile plugin initialization complete.');
 })();
+
+/* ═══════════════════════════════════════════════════════
+   PWA — SERVICE WORKER REGISTRATION (Phase 1)
+   Registers sw.js to enable:
+     • Offline caching of the app shell
+     • Background push notification handling
+     • "Add to Home Screen" prompt support
+   In Phase 2 (Capacitor), the WebView bypasses SW for
+   native assets but the SW still handles API caching.
+═══════════════════════════════════════════════════════ */
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js', { scope: '/' })
+            .then((reg) => {
+                console.log('[PWA] Service worker registered. Scope:', reg.scope);
+                // Check for SW updates every 60 minutes
+                setInterval(() => reg.update(), 60 * 60 * 1000);
+            })
+            .catch((err) => console.warn('[PWA] Service worker registration failed:', err.message));
+    });
+
+    // ── "Add to Home Screen" prompt (Android Chrome / Edge) ──
+    // Capture the install prompt so we can show it on user action.
+    let deferredInstallPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        // Show a subtle install banner in the header if one exists
+        const installBanner = document.getElementById('pwa-install-banner');
+        if (installBanner) installBanner.style.display = 'flex';
+    });
+
+    // Called by the install button (wired up below in header)
+    window.triggerPWAInstall = async () => {
+        if (!deferredInstallPrompt) return;
+        deferredInstallPrompt.prompt();
+        const { outcome } = await deferredInstallPrompt.userChoice;
+        console.log('[PWA] Install prompt outcome:', outcome);
+        deferredInstallPrompt = null;
+        const installBanner = document.getElementById('pwa-install-banner');
+        if (installBanner) installBanner.style.display = 'none';
+    };
+
+    // Hide banner once app is installed
+    window.addEventListener('appinstalled', () => {
+        console.log('[PWA] App installed successfully.');
+        const installBanner = document.getElementById('pwa-install-banner');
+        if (installBanner) installBanner.style.display = 'none';
+    });
+}
 </script>
 </body>
 </html>

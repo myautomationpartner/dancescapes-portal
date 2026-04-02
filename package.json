@@ -18,5 +18,8 @@
     "@capacitor/core": "^8.3.0",
     "@capacitor/status-bar": "^8.0.2",
     "@capawesome/capacitor-android-edge-to-edge-support": "^8.0.6"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5"
   }
 }
