@@ -347,7 +347,61 @@
             .ideas-grid, .growth-summary, .form-grid { grid-template-columns: 1fr; }
             .tab-btn { padding: 7px 7px; font-size: 11px; }
             .panel-box { padding: 16px; }
+            .inbox-layout { flex-direction: column; height: auto; }
+            .inbox-conv-list { width: 100%; max-height: 240px; border-right: none; border-bottom: 1px solid var(--border); }
+            .inbox-thread { min-height: 300px; }
         }
+
+        /* ─── Inbox ──────────────────────────────────────────── */
+        .inbox-wrap { display: flex; flex-direction: column; height: 100%; }
+        .inbox-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 0 0 14px; gap: 12px; flex-wrap: wrap; }
+        .inbox-toolbar-left { display: flex; gap: 8px; flex-wrap: wrap; }
+        .inbox-filter-btn { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 20px; color: var(--text-dim); padding: 5px 13px; font-size: 12px; font-weight: 500; transition: all .2s; }
+        .inbox-filter-btn.active, .inbox-filter-btn:hover { border-color: var(--gold-border); color: var(--gold); background: var(--gold-dim); }
+        .inbox-refresh-btn { background: var(--gold-dim); border: 1px solid var(--gold-border); border-radius: 8px; color: var(--gold); padding: 5px 12px; font-size: 12px; font-weight: 600; }
+        .inbox-refresh-btn:hover { background: rgba(201,168,76,0.2); }
+        .inbox-layout { display: flex; height: 560px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--bg-card); }
+        .inbox-conv-list { width: 280px; flex-shrink: 0; border-right: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; }
+        .inbox-conv-item { padding: 13px 14px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .15s; display: flex; gap: 10px; align-items: flex-start; min-height: 0; }
+        .inbox-conv-item:hover { background: var(--bg-elevated); }
+        .inbox-conv-item.active { background: var(--gold-dim); border-left: 3px solid var(--gold); }
+        .inbox-conv-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; border: 1px solid var(--border); }
+        .inbox-conv-meta { flex: 1; min-width: 0; }
+        .inbox-conv-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .inbox-conv-preview { font-size: 11px; color: var(--text-dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .inbox-conv-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+        .inbox-conv-time { font-size: 10px; color: var(--text-faint); }
+        .inbox-net-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+        .net-instagram { background: rgba(195,60,148,0.15); color: #e06ab5; }
+        .net-facebook  { background: rgba(66,103,178,0.15); color: #7998d6; }
+        .net-tiktok    { background: rgba(255,255,255,0.08); color: #bbb; }
+        .net-googlemybusiness { background: rgba(66,133,244,0.15); color: #7faaee; }
+        .inbox-thread { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .inbox-thread-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; background: var(--bg-card); }
+        .inbox-thread-header-net { font-size: 18px; }
+        .inbox-thread-header-name { font-size: 14px; font-weight: 600; color: var(--text); }
+        .inbox-thread-header-sub  { font-size: 11px; color: var(--text-dim); }
+        .inbox-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+        .inbox-bubble-wrap { display: flex; flex-direction: column; }
+        .inbox-bubble-wrap.outbound { align-items: flex-end; }
+        .inbox-bubble { max-width: 72%; padding: 9px 13px; border-radius: 12px; font-size: 13px; line-height: 1.5; word-break: break-word; }
+        .inbox-bubble.inbound { background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 3px; }
+        .inbox-bubble.outbound { background: var(--gold-dim); border: 1px solid var(--gold-border); color: var(--gold-light); border-bottom-right-radius: 3px; }
+        .inbox-bubble-time { font-size: 10px; color: var(--text-faint); margin-top: 3px; padding: 0 3px; }
+        .inbox-stars { color: var(--gold); font-size: 14px; margin-bottom: 4px; }
+        .inbox-warning { margin: 0 16px 10px; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #fbbf24; display: flex; align-items: center; gap: 7px; }
+        .inbox-reply-area { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-end; background: var(--bg-card); }
+        .inbox-reply-input { flex: 1; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 9px 13px; color: var(--text); font-size: 13px; resize: none; min-height: 40px; max-height: 100px; line-height: 1.4; transition: border .2s; }
+        .inbox-reply-input:focus { outline: none; border-color: var(--gold-border); }
+        .inbox-reply-send { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #111; font-weight: 700; font-size: 13px; border: none; border-radius: 10px; padding: 9px 18px; white-space: nowrap; transition: opacity .2s; }
+        .inbox-reply-send:hover { opacity: .85; }
+        .inbox-reply-send:disabled { opacity: .4; cursor: not-allowed; }
+        .inbox-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--text-dim); font-size: 14px; }
+        .inbox-empty-icon { font-size: 40px; opacity: .4; }
+        .inbox-loading { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-dim); font-size: 13px; gap: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .inbox-spinner { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin .7s linear infinite; }
+        .inbox-no-select { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 13px; }
     </style>
 </head>
 <body>
@@ -466,6 +520,7 @@
             <button class="tab-btn" data-tab="metrics">📊 Metrics Log</button>
             <button class="tab-btn" data-tab="growth">📈 Growth</button>
             <button class="tab-btn" data-tab="ideas">💡 Content Ideas</button>
+            <button class="tab-btn" data-tab="inbox">💬 Inbox</button>
         </div>
 
         <div class="tab-panel active" id="panel-calendar">
@@ -522,6 +577,31 @@
                 <div class="hashtag-section">
                     <div class="hashtag-title">Hashtag Sets — Click to Copy</div>
                     <div id="hashtag-rows"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Inbox Panel ── -->
+        <div class="tab-panel" id="panel-inbox">
+            <div class="panel-box" style="display:flex;flex-direction:column;height:100%;padding-bottom:0">
+                <div class="inbox-wrap">
+                    <div class="inbox-toolbar">
+                        <div class="inbox-toolbar-left">
+                            <button class="inbox-filter-btn active" data-filter="all">All</button>
+                            <button class="inbox-filter-btn" data-filter="message">💬 Messages</button>
+                            <button class="inbox-filter-btn" data-filter="comment">🗨️ Comments</button>
+                            <button class="inbox-filter-btn" data-filter="review">⭐ Reviews</button>
+                        </div>
+                        <button class="inbox-refresh-btn" id="inbox-refresh-btn">🔄 Refresh</button>
+                    </div>
+                    <div class="inbox-layout">
+                        <div class="inbox-conv-list" id="inbox-conv-list">
+                            <div class="inbox-loading"><div class="inbox-spinner"></div> Loading…</div>
+                        </div>
+                        <div class="inbox-thread" id="inbox-thread">
+                            <div class="inbox-no-select">← Select a conversation</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -827,6 +907,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.add('active');
         document.getElementById(`panel-${btn.dataset.tab}`).classList.add('active');
         if (btn.dataset.tab === 'growth') renderGrowth();
+        if (btn.dataset.tab === 'inbox') loadInbox();
     });
 });
 
@@ -996,6 +1077,200 @@ function syncFromApi() {
 }
 
 /* ═══════════════════════════════════════════════════════
+   UNIFIED INBOX
+═══════════════════════════════════════════════════════ */
+const INBOX_BLOG_ID   = '6035446';
+const INBOX_API_URL   = '/api/inbox';
+const INBOX_REPLY_URL = 'https://n8n.myautomationpartner.com/webhook/inbox-reply';
+
+const NET_ICONS = { instagram: '📸', facebook: '📘', tiktok: '🎵', googlemybusiness: '🌟', unknown: '💬' };
+const NET_LABELS = { instagram: 'Instagram', facebook: 'Facebook', tiktok: 'TikTok', googlemybusiness: 'Google Review', unknown: 'Message' };
+
+let inboxMessages     = [];
+let inboxFilter       = 'all';
+let activeConvId      = null;
+let optimisticReplies = {};   // { conversationId: [{ text, sentAt }] }
+
+function inboxRelTime(unixTs) {
+    const diff = Math.floor(Date.now() / 1000) - unixTs;
+    if (diff < 60)     return 'just now';
+    if (diff < 3600)   return Math.floor(diff / 60) + 'm ago';
+    if (diff < 86400)  return Math.floor(diff / 3600) + 'h ago';
+    if (diff < 604800) return Math.floor(diff / 86400) + 'd ago';
+    return new Date(unixTs * 1000).toLocaleDateString();
+}
+
+function inbox24hrWarning(unixTs, network) {
+    if (!['instagram','facebook'].includes(network)) return null;
+    const hoursOld = (Date.now() / 1000 - unixTs) / 3600;
+    if (hoursOld < 22) return null;
+    const remaining = 24 - hoursOld;
+    if (remaining <= 0) return '⚠️ The 24-hour reply window for this message has likely closed.';
+    const h = Math.floor(remaining), m = Math.floor((remaining - h) * 60);
+    return `⚠️ Reply window closes in ${h}h ${m}m — ${NET_LABELS[network]} limits replies after 24 hours.`;
+}
+
+function inboxNetBadge(network) {
+    return `<span class="inbox-net-badge net-${network}">${NET_LABELS[network] || network}</span>`;
+}
+
+function getConversations() {
+    const msgs = inboxFilter === 'all' ? inboxMessages : inboxMessages.filter(m => m.type === inboxFilter);
+    // Group by conversationId, pick most recent message as preview
+    const map = {};
+    msgs.forEach(m => {
+        if (!map[m.conversationId] || m.timestamp > map[m.conversationId].timestamp) map[m.conversationId] = m;
+    });
+    return Object.values(map).sort((a, b) => b.timestamp - a.timestamp);
+}
+
+function renderInboxConvList() {
+    const el = document.getElementById('inbox-conv-list');
+    const convs = getConversations();
+    if (!convs.length) {
+        el.innerHTML = '<div class="inbox-empty" style="padding:32px 16px;text-align:center"><div class="inbox-empty-icon">📭</div><div>No messages yet.<br><small>Messages sync every 15 minutes via n8n.</small></div></div>';
+        return;
+    }
+    el.innerHTML = convs.map(c => `
+        <div class="inbox-conv-item${activeConvId === c.conversationId ? ' active' : ''}"
+             onclick="openConversation('${c.conversationId}')">
+            <div class="inbox-conv-avatar">${NET_ICONS[c.network] || '💬'}</div>
+            <div class="inbox-conv-meta">
+                <div class="inbox-conv-name">${escHtml(c.userName || 'Unknown')}</div>
+                <div class="inbox-conv-preview">${c.rating ? '⭐'.repeat(c.rating) + ' ' : ''}${escHtml((c.text || '').substring(0, 55))}${(c.text||'').length > 55 ? '…' : ''}</div>
+                <div class="inbox-conv-footer">
+                    <span class="inbox-conv-time">${inboxRelTime(c.timestamp)}</span>
+                    ${inboxNetBadge(c.network)}
+                </div>
+            </div>
+        </div>`).join('');
+}
+
+function openConversation(convId) {
+    activeConvId = convId;
+    renderInboxConvList();
+    renderInboxThread();
+}
+
+function renderInboxThread() {
+    const el = document.getElementById('inbox-thread');
+    if (!activeConvId) { el.innerHTML = '<div class="inbox-no-select">← Select a conversation</div>'; return; }
+
+    const msgs = inboxMessages.filter(m => m.conversationId === activeConvId).sort((a, b) => a.timestamp - b.timestamp);
+    const optimistic = optimisticReplies[activeConvId] || [];
+    if (!msgs.length) { el.innerHTML = '<div class="inbox-no-select">No messages found</div>'; return; }
+
+    const first = msgs[0];
+    const warning = inbox24hrWarning(first.timestamp, first.network);
+    const starsHtml = first.rating ? `<div class="inbox-stars">${'⭐'.repeat(first.rating)}</div>` : '';
+
+    const bubbles = msgs.map(m => `
+        <div class="inbox-bubble-wrap">
+            ${m.rating ? `<div class="inbox-stars">${'⭐'.repeat(m.rating)}</div>` : ''}
+            <div class="inbox-bubble inbound">${escHtml(m.text || '')}</div>
+            <div class="inbox-bubble-time">${inboxRelTime(m.timestamp)}</div>
+        </div>`).join('');
+
+    const outboundBubbles = optimistic.map(r => `
+        <div class="inbox-bubble-wrap outbound">
+            <div class="inbox-bubble outbound">${escHtml(r.text)}</div>
+            <div class="inbox-bubble-time" style="text-align:right">Sent ${inboxRelTime(r.sentAt)}</div>
+        </div>`).join('');
+
+    el.innerHTML = `
+        <div class="inbox-thread-header">
+            <div class="inbox-thread-header-net">${NET_ICONS[first.network] || '💬'}</div>
+            <div>
+                <div class="inbox-thread-header-name">${escHtml(first.userName || 'Unknown')}</div>
+                <div class="inbox-thread-header-sub">${NET_LABELS[first.network] || first.network} · ${inboxRelTime(first.timestamp)}</div>
+            </div>
+        </div>
+        ${warning ? `<div class="inbox-warning">${warning}</div>` : ''}
+        <div class="inbox-messages" id="inbox-messages-scroll">${bubbles}${outboundBubbles}</div>
+        <div class="inbox-reply-area">
+            <textarea class="inbox-reply-input" id="inbox-reply-input" placeholder="Type a reply…" rows="1"
+                onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendInboxReply()}"
+                oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+            <button class="inbox-reply-send" id="inbox-reply-send" onclick="sendInboxReply()">Send ↗</button>
+        </div>`;
+
+    // Scroll to bottom
+    const scroll = document.getElementById('inbox-messages-scroll');
+    if (scroll) scroll.scrollTop = scroll.scrollHeight;
+}
+
+async function sendInboxReply() {
+    const input = document.getElementById('inbox-reply-input');
+    const btn   = document.getElementById('inbox-reply-send');
+    const text  = (input?.value || '').trim();
+    if (!text || !activeConvId) return;
+
+    const conv = inboxMessages.find(m => m.conversationId === activeConvId);
+    if (!conv) return;
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+
+    try {
+        const res = await fetch(INBOX_REPLY_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ blogId: INBOX_BLOG_ID, conversationId: activeConvId, text, network: conv.network })
+        });
+        const data = await res.json().catch(() => ({}));
+        if (data.ok !== false) {
+            // Optimistic update
+            if (!optimisticReplies[activeConvId]) optimisticReplies[activeConvId] = [];
+            optimisticReplies[activeConvId].push({ text, sentAt: Math.floor(Date.now() / 1000) });
+            input.value = '';
+            input.style.height = 'auto';
+            renderInboxThread();
+        } else {
+            alert('Reply failed: ' + (data.error || 'Unknown error'));
+        }
+    } catch (err) {
+        alert('Could not reach reply service. Check your connection.');
+    } finally {
+        if (btn) { btn.disabled = false; btn.textContent = 'Send ↗'; }
+    }
+}
+
+async function loadInbox(showSpinner = true) {
+    const listEl = document.getElementById('inbox-conv-list');
+    if (showSpinner && listEl) listEl.innerHTML = '<div class="inbox-loading"><div class="inbox-spinner"></div> Loading…</div>';
+    try {
+        const res = await fetch(`${INBOX_API_URL}?blogId=${INBOX_BLOG_ID}&t=${Date.now()}`);
+        if (!res.ok) throw new Error(res.status);
+        const data = await res.json();
+        inboxMessages = data.messages || [];
+        renderInboxConvList();
+        if (activeConvId) renderInboxThread();
+    } catch (err) {
+        if (listEl) listEl.innerHTML = `<div class="inbox-empty" style="padding:24px 16px;text-align:center"><div class="inbox-empty-icon">⚠️</div><div>Could not load inbox.<br><small>Messages sync via n8n every 15 min.</small></div></div>`;
+    }
+}
+
+function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function initInbox() {
+    // Filter buttons
+    document.querySelectorAll('.inbox-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.inbox-filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            inboxFilter = btn.dataset.filter;
+            activeConvId = null;
+            renderInboxConvList();
+            renderInboxThread();
+        });
+    });
+    // Refresh button
+    document.getElementById('inbox-refresh-btn')?.addEventListener('click', () => loadInbox(true));
+}
+
+/* ═══════════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════════ */
 initHeader();
@@ -1004,6 +1279,7 @@ renderPlatformCards();
 renderCalendar();
 renderMetricsTable();
 renderContentIdeas();
+initInbox();
 syncFromApi();
 setInterval(syncFromApi, 5 * 60 * 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) syncFromApi(); });

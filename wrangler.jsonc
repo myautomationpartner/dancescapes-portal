@@ -1,7 +1,12 @@
 {
-  "name": "dancescapes-portal",
+  "name": "my-automation-partner",
   "compatibility_date": "2025-09-27",
-  "assets": {
-    "directory": "./public"
-  }
+  "pages_build_output_dir": "./public",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "dancescapes-inbox",
+      "database_id": "41d9a55e-eb6b-4355-b5c4-e3bea530afec"
+    }
+  ]
 }
