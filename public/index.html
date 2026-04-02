@@ -134,6 +134,61 @@
         }
         .header-inbox-btn:hover { background: rgba(201,168,76,0.22); box-shadow: 0 0 16px rgba(201,168,76,0.18); }
         .header-inbox-btn.has-unread { border-color: rgba(239,68,68,0.5); box-shadow: 0 0 14px rgba(239,68,68,0.15); }
+
+        /* ─── iOS Install Tooltip ────────────────────────────── */
+        #ios-install-banner {
+            display: none;
+            position: fixed;
+            bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+            left: 50%; transform: translateX(-50%);
+            width: min(360px, calc(100vw - 32px));
+            background: #1e1e3a;
+            border: 1px solid var(--gold-border);
+            border-radius: 16px;
+            padding: 16px 18px;
+            z-index: 9999;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 0 0 1px rgba(201,168,76,0.08);
+            animation: ios-banner-in 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+        @keyframes ios-banner-in {
+            from { opacity: 0; transform: translateX(-50%) translateY(24px); }
+            to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        /* Arrow pointing down toward Safari share button */
+        #ios-install-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -9px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0;
+            border-left: 9px solid transparent;
+            border-right: 9px solid transparent;
+            border-top: 9px solid var(--gold);
+        }
+        .ios-banner-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .ios-banner-title {
+            font-size: 14px; font-weight: 700; color: var(--gold);
+            letter-spacing: 0.02em;
+        }
+        .ios-banner-close {
+            background: none; border: none; color: var(--text-dim);
+            font-size: 18px; padding: 0; line-height: 1; cursor: pointer;
+            opacity: 0.7; min-height: unset;
+        }
+        .ios-banner-close:hover { opacity: 1; }
+        .ios-banner-steps {
+            list-style: none; display: flex; flex-direction: column; gap: 8px;
+        }
+        .ios-banner-steps li {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 13px; color: var(--text-dim); line-height: 1.4;
+        }
+        .ios-banner-steps .step-icon {
+            font-size: 20px; flex-shrink: 0; width: 28px; text-align: center;
+        }
+        .ios-banner-steps strong { color: var(--text); }
         .inbox-badge {
             display: none; position: absolute; top: -7px; right: -7px;
             background: #ef4444; color: #fff; font-size: 10px; font-weight: 800;
@@ -1582,6 +1637,62 @@ if ('serviceWorker' in navigator) {
         if (installBanner) installBanner.style.display = 'none';
     });
 }
+
+/* ═══════════════════════════════════════════════════════
+   iOS INSTALL BANNER
+   Apple blocks beforeinstallprompt, so we show a manual
+   guide instead. Detects iPhone/iPad Safari specifically.
+   Dismissed state saved to localStorage — never pesters twice.
+═══════════════════════════════════════════════════════ */
+(function initIOSInstallBanner() {
+    const DISMISSED_KEY = 'map_ios_install_dismissed';
+
+    // Only show on iOS Safari that hasn't already installed the PWA
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isSafari = /safari/i.test(navigator.userAgent) && !/chrome|chromium|crios|fxios/i.test(navigator.userAgent);
+    const isStandalone = window.navigator.standalone === true; // already installed
+    const wasDismissed = localStorage.getItem(DISMISSED_KEY);
+
+    if (!isIOS || !isSafari || isStandalone || wasDismissed) return;
+
+    const banner = document.getElementById('ios-install-banner');
+    if (!banner) return;
+
+    // Delay slightly so the page has fully painted first
+    setTimeout(() => { banner.style.display = 'block'; }, 1800);
+
+    window.dismissIOSBanner = function() {
+        banner.style.animation = 'none';
+        banner.style.transition = 'opacity 0.2s, transform 0.2s';
+        banner.style.opacity = '0';
+        banner.style.transform = 'translateX(-50%) translateY(16px)';
+        setTimeout(() => { banner.style.display = 'none'; }, 220);
+        localStorage.setItem(DISMISSED_KEY, '1');
+    };
+})();
 </script>
+
+<!-- iOS "Add to Home Screen" install guide tooltip -->
+<div id="ios-install-banner" role="dialog" aria-label="Install app guide">
+    <div class="ios-banner-header">
+        <span class="ios-banner-title">📲 Install Dancescapes Portal</span>
+        <button class="ios-banner-close" onclick="dismissIOSBanner()" aria-label="Dismiss">✕</button>
+    </div>
+    <ol class="ios-banner-steps">
+        <li>
+            <span class="step-icon">1️⃣</span>
+            <span>Tap the <strong>Share button</strong> <span style="font-size:16px">📤</span> at the bottom of Safari</span>
+        </li>
+        <li>
+            <span class="step-icon">2️⃣</span>
+            <span>Scroll down and tap <strong>"Add to Home Screen"</strong></span>
+        </li>
+        <li>
+            <span class="step-icon">3️⃣</span>
+            <span>Tap <strong>"Add"</strong> — the portal opens like a native app</span>
+        </li>
+    </ol>
+</div>
+
 </body>
 </html>
