@@ -483,61 +483,284 @@
             .ideas-grid, .growth-summary, .form-grid { grid-template-columns: 1fr; }
             .tab-btn { padding: 7px 7px; font-size: 11px; }
             .panel-box { padding: 16px; }
-            .inbox-layout { flex-direction: column; height: auto; }
-            .inbox-conv-list { width: 100%; max-height: 240px; border-right: none; border-bottom: 1px solid var(--border); }
-            .inbox-thread { min-height: 300px; }
+            /* Mobile inbox: single-pane slide navigation */
+            .inbox-layout { position: relative; overflow: hidden; }
+            .inbox-conv-list {
+                width: 100%; border-right: none;
+                position: absolute; inset: 0;
+                transition: transform .28s cubic-bezier(0.4,0,0.2,1);
+                z-index: 2;
+            }
+            .inbox-thread {
+                width: 100%;
+                position: absolute; inset: 0;
+                transform: translateX(100%);
+                transition: transform .28s cubic-bezier(0.4,0,0.2,1);
+                z-index: 3;
+            }
+            /* When a conversation is open on mobile */
+            .inbox-layout.thread-open .inbox-conv-list { transform: translateX(-100%); }
+            .inbox-layout.thread-open .inbox-thread { transform: translateX(0); }
+            .inbox-thread-back { display: flex !important; align-items: center; }
         }
 
-        /* ─── Inbox ──────────────────────────────────────────── */
-        .inbox-wrap { display: flex; flex-direction: column; height: 100%; }
-        .inbox-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 0 0 14px; gap: 12px; flex-wrap: wrap; }
-        .inbox-toolbar-left { display: flex; gap: 8px; flex-wrap: wrap; }
+        /* ─── Inbox — full-height two-pane layout ───────────────── */
+        .inbox-wrap { display: flex; flex-direction: column; height: 100%; min-height: 0; }
+
+        /* Toolbar row */
+        .inbox-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 0 0 12px; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
+        .inbox-toolbar-left { display: flex; gap: 6px; flex-wrap: wrap; }
         .inbox-filter-btn { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 20px; color: var(--text-dim); padding: 5px 13px; font-size: 12px; font-weight: 500; transition: all .2s; }
         .inbox-filter-btn.active, .inbox-filter-btn:hover { border-color: var(--gold-border); color: var(--gold); background: var(--gold-dim); }
-        .inbox-refresh-btn { background: var(--gold-dim); border: 1px solid var(--gold-border); border-radius: 8px; color: var(--gold); padding: 5px 12px; font-size: 12px; font-weight: 600; }
+        .inbox-refresh-btn { background: var(--gold-dim); border: 1px solid var(--gold-border); border-radius: 8px; color: var(--gold); padding: 5px 12px; font-size: 12px; font-weight: 600; flex-shrink: 0; }
         .inbox-refresh-btn:hover { background: rgba(201,168,76,0.2); }
-        .inbox-layout { display: flex; height: 560px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: var(--bg-card); }
-        .inbox-conv-list { width: 280px; flex-shrink: 0; border-right: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; }
-        .inbox-conv-item { padding: 13px 14px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background .15s; display: flex; gap: 10px; align-items: flex-start; min-height: 0; }
-        .inbox-conv-item:hover { background: var(--bg-elevated); }
-        .inbox-conv-item.active { background: var(--gold-dim); border-left: 3px solid var(--gold); }
-        .inbox-conv-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--bg-elevated); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; border: 1px solid var(--border); }
+
+        /* Two-pane container — fills all remaining height */
+        .inbox-layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            background: var(--bg-card);
+        }
+
+        /* ── Left pane: conversation list ── */
+        .inbox-conv-list {
+            width: 300px;
+            flex-shrink: 0;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .inbox-conv-list::-webkit-scrollbar { width: 3px; }
+        .inbox-conv-list::-webkit-scrollbar-thumb { background: #333; }
+
+        /* Conversation items */
+        .inbox-conv-item {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background .15s;
+            display: flex;
+            gap: 11px;
+            align-items: flex-start;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+        .inbox-conv-item:hover { background: rgba(255,255,255,0.03); }
+        .inbox-conv-item.active { background: var(--gold-dim); border-left-color: var(--gold); }
+        .inbox-conv-item.unread { border-left-color: var(--rose); }
+        .inbox-conv-item.unread .inbox-conv-name { color: #fff; font-weight: 700; }
+
+        /* Unread dot */
+        .inbox-unread-dot {
+            position: absolute;
+            top: 14px; right: 12px;
+            width: 8px; height: 8px;
+            background: var(--rose);
+            border-radius: 50%;
+            display: none;
+        }
+        .inbox-conv-item.unread .inbox-unread-dot { display: block; }
+
+        /* Avatar circle */
+        .inbox-conv-avatar {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; flex-shrink: 0;
+            font-weight: 700; color: #fff;
+            letter-spacing: 0.01em;
+        }
+        .inbox-conv-avatar.net-instagram { background: linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045); }
+        .inbox-conv-avatar.net-facebook  { background: #1877f2; }
+        .inbox-conv-avatar.net-tiktok    { background: #111; border: 1px solid #333; }
+        .inbox-conv-avatar.net-googlemybusiness { background: linear-gradient(135deg,#4285f4,#34a853); }
+        .inbox-conv-avatar.net-google    { background: linear-gradient(135deg,#4285f4,#34a853); }
+
         .inbox-conv-meta { flex: 1; min-width: 0; }
         .inbox-conv-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .inbox-conv-preview { font-size: 11px; color: var(--text-dim); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .inbox-conv-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+        .inbox-conv-preview { font-size: 11px; color: var(--text-dim); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; }
+        .inbox-conv-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 5px; gap: 6px; }
         .inbox-conv-time { font-size: 10px; color: var(--text-faint); }
-        .inbox-net-badge { font-size: 10px; padding: 2px 7px; border-radius: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+        .inbox-net-badge { font-size: 9px; padding: 2px 7px; border-radius: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; flex-shrink: 0; }
         .net-instagram { background: rgba(195,60,148,0.15); color: #e06ab5; }
-        .net-facebook  { background: rgba(66,103,178,0.15); color: #7998d6; }
-        .net-tiktok    { background: rgba(255,255,255,0.08); color: #bbb; }
-        .net-googlemybusiness { background: rgba(66,133,244,0.15); color: #7faaee; }
-        .inbox-thread { flex: 1; display: flex; flex-direction: column; min-width: 0; }
-        .inbox-thread-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; background: var(--bg-card); }
-        .inbox-thread-header-net { font-size: 18px; }
-        .inbox-thread-header-name { font-size: 14px; font-weight: 600; color: var(--text); }
-        .inbox-thread-header-sub  { font-size: 11px; color: var(--text-dim); }
-        .inbox-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
-        .inbox-bubble-wrap { display: flex; flex-direction: column; }
-        .inbox-bubble-wrap.outbound { align-items: flex-end; }
-        .inbox-bubble { max-width: 72%; padding: 9px 13px; border-radius: 12px; font-size: 13px; line-height: 1.5; word-break: break-word; }
-        .inbox-bubble.inbound { background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text); border-bottom-left-radius: 3px; }
-        .inbox-bubble.outbound { background: var(--gold-dim); border: 1px solid var(--gold-border); color: var(--gold-light); border-bottom-right-radius: 3px; }
-        .inbox-bubble-time { font-size: 10px; color: var(--text-faint); margin-top: 3px; padding: 0 3px; }
-        .inbox-stars { color: var(--gold); font-size: 14px; margin-bottom: 4px; }
-        .inbox-warning { margin: 0 16px 10px; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #fbbf24; display: flex; align-items: center; gap: 7px; }
-        .inbox-reply-area { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: flex-end; background: var(--bg-card); }
-        .inbox-reply-input { flex: 1; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 10px; padding: 9px 13px; color: var(--text); font-size: 13px; resize: none; min-height: 40px; max-height: 100px; line-height: 1.4; transition: border .2s; }
+        .net-facebook  { background: rgba(24,119,242,0.15); color: #7998d6; }
+        .net-tiktok    { background: rgba(255,255,255,0.08); color: #aaa; }
+        .net-googlemybusiness, .net-google { background: rgba(66,133,244,0.15); color: #7faaee; }
+
+        /* ── Right pane: thread ── */
+        .inbox-thread { flex: 1; display: flex; flex-direction: column; min-width: 0; background: var(--bg-card); }
+
+        .inbox-thread-header {
+            padding: 13px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 12px;
+            background: rgba(255,255,255,0.02);
+            flex-shrink: 0;
+        }
+        .inbox-thread-back {
+            display: none; /* shown on mobile only */
+            background: none; border: none;
+            color: var(--gold); font-size: 18px;
+            padding: 0 6px 0 0; cursor: pointer; min-height: unset;
+        }
+        .inbox-thread-avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0;
+        }
+        .inbox-thread-header-info { flex: 1; min-width: 0; }
+        .inbox-thread-header-name { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .inbox-thread-header-sub  { font-size: 11px; color: var(--text-dim); margin-top: 1px; }
+
+        /* Messages scroll area */
+        .inbox-messages {
+            flex: 1; overflow-y: auto;
+            padding: 18px 18px 8px;
+            display: flex; flex-direction: column;
+            gap: 12px;
+        }
+        .inbox-messages::-webkit-scrollbar { width: 3px; }
+        .inbox-messages::-webkit-scrollbar-thumb { background: #333; }
+
+        /* Bubbles */
+        .inbox-bubble-wrap { display: flex; flex-direction: column; max-width: 78%; }
+        .inbox-bubble-wrap.outbound { align-items: flex-end; align-self: flex-end; }
+        .inbox-bubble-wrap.inbound  { align-items: flex-start; align-self: flex-start; }
+
+        .inbox-bubble {
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 13px; line-height: 1.55;
+            word-break: break-word;
+        }
+        .inbox-bubble.inbound {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-bottom-left-radius: 4px;
+        }
+        .inbox-bubble.outbound {
+            background: linear-gradient(135deg, rgba(201,168,76,0.25), rgba(201,168,76,0.15));
+            border: 1px solid var(--gold-border);
+            color: var(--gold-light);
+            border-bottom-right-radius: 4px;
+        }
+        .inbox-bubble-time {
+            font-size: 10px; color: var(--text-faint);
+            margin-top: 4px; padding: 0 2px;
+        }
+        .inbox-stars { color: var(--gold); font-size: 15px; margin-bottom: 5px; }
+
+        /* Sender label (above first bubble in thread) */
+        .inbox-sender-label {
+            font-size: 11px; color: var(--text-faint);
+            margin-bottom: 3px; padding: 0 2px;
+        }
+
+        /* Date divider */
+        .inbox-date-divider {
+            display: flex; align-items: center; gap: 10px;
+            margin: 8px 0; color: var(--text-faint); font-size: 10px;
+            text-transform: uppercase; letter-spacing: .08em;
+        }
+        .inbox-date-divider::before, .inbox-date-divider::after {
+            content: ''; flex: 1; height: 1px; background: var(--border);
+        }
+
+        /* Warning bar */
+        .inbox-warning { margin: 0 16px 10px; background: rgba(251,191,36,0.08); border: 1px solid rgba(251,191,36,0.25); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #fbbf24; display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+
+        /* Reply area — sticky bottom */
+        .inbox-reply-area {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            display: flex; gap: 10px; align-items: flex-end;
+            background: var(--bg-card);
+            flex-shrink: 0;
+        }
+        .inbox-reply-input {
+            flex: 1;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 10px 16px;
+            color: var(--text); font-size: 13px;
+            resize: none; min-height: 42px; max-height: 120px;
+            line-height: 1.45; transition: border .2s;
+            overflow-y: auto;
+        }
         .inbox-reply-input:focus { outline: none; border-color: var(--gold-border); }
-        .inbox-reply-send { background: linear-gradient(135deg, var(--gold), var(--gold-light)); color: #111; font-weight: 700; font-size: 13px; border: none; border-radius: 10px; padding: 9px 18px; white-space: nowrap; transition: opacity .2s; }
-        .inbox-reply-send:hover { opacity: .85; }
-        .inbox-reply-send:disabled { opacity: .4; cursor: not-allowed; }
-        .inbox-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--text-dim); font-size: 14px; }
-        .inbox-empty-icon { font-size: 40px; opacity: .4; }
+        .inbox-reply-input::placeholder { color: var(--text-faint); }
+        .inbox-reply-send {
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            color: #111; font-weight: 800; font-size: 18px;
+            border: none; border-radius: 50%;
+            width: 42px; height: 42px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: opacity .2s, transform .15s;
+            padding: 0;
+        }
+        .inbox-reply-send:hover { opacity: .85; transform: scale(1.06); }
+        .inbox-reply-send:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+
+        /* Empty / loading states */
+        .inbox-empty {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 12px; color: var(--text-dim); padding: 40px;
+        }
+        .inbox-empty-icon { font-size: 48px; opacity: .3; }
+        .inbox-empty-title { font-size: 15px; font-weight: 600; color: var(--text-dim); }
+        .inbox-empty-sub { font-size: 12px; color: var(--text-faint); text-align: center; line-height: 1.5; }
+
         .inbox-loading { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-dim); font-size: 13px; gap: 8px; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .inbox-spinner { width: 16px; height: 16px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin .7s linear infinite; }
-        .inbox-no-select { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 13px; }
+
+        .inbox-no-select {
+            flex: 1; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            gap: 12px; color: var(--text-dim);
+        }
+        .inbox-no-select-icon { font-size: 48px; opacity: .2; }
+        .inbox-no-select-text { font-size: 13px; color: var(--text-faint); }
+
+        /* ── Calendar mini-widget (collapsible) ── */
+        .cal-widget {
+            background: var(--bg-content);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            margin-bottom: 18px;
+            overflow: hidden;
+        }
+        .cal-widget-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 13px 18px; cursor: pointer;
+            user-select: none; -webkit-user-select: none;
+            transition: background .15s;
+        }
+        .cal-widget-header:hover { background: rgba(255,255,255,0.02); }
+        .cal-widget-title {
+            font-size: 13px; font-weight: 700; color: var(--gold);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .cal-widget-toggle {
+            font-size: 11px; color: var(--text-faint);
+            transition: transform .25s;
+        }
+        .cal-widget.open .cal-widget-toggle { transform: rotate(180deg); }
+        .cal-widget-body {
+            display: none;
+            padding: 0 18px 18px;
+            border-top: 1px solid var(--border);
+        }
+        .cal-widget.open .cal-widget-body { display: block; }
+
     </style>
 </head>
 <body>
@@ -661,18 +884,14 @@
 
         <div class="platform-cards" id="platform-cards"></div>
 
-        <div class="tab-bar">
-            <button class="tab-btn active" data-tab="calendar">📅 This Week</button>
-            <button class="tab-btn" data-tab="metrics">📊 Metrics Log</button>
-            <button class="tab-btn" data-tab="growth">📈 Growth</button>
-            <button class="tab-btn" data-tab="ideas">💡 Content Ideas</button>
-            <button class="tab-btn" data-tab="inbox">💬 Unified Inbox</button>
-        </div>
-
-        <div class="tab-panel active" id="panel-calendar">
-            <div class="panel-box">
-                <div class="calendar-toolbar">
-                    <div class="panel-title" style="margin-bottom:0">Weekly Content Calendar</div>
+        <!-- ── Calendar mini-widget (collapsible) ── -->
+        <div class="cal-widget" id="cal-widget">
+            <div class="cal-widget-header" onclick="toggleCalWidget()" id="cal-widget-header">
+                <span class="cal-widget-title">📅 <span>Plan This Week</span></span>
+                <span class="cal-widget-toggle">▼</span>
+            </div>
+            <div class="cal-widget-body">
+                <div class="calendar-toolbar" style="margin-top:14px">
                     <div class="cal-nav">
                         <button id="cal-prev">← Prev</button>
                         <span class="week-label" id="week-label">This Week</span>
@@ -683,6 +902,13 @@
                 <div class="calendar-grid" id="calendar-grid"></div>
                 <div class="cal-legend" id="cal-legend"></div>
             </div>
+        </div>
+
+        <div class="tab-bar">
+            <button class="tab-btn active" data-tab="inbox">💬 Inbox</button>
+            <button class="tab-btn" data-tab="metrics">📊 Metrics</button>
+            <button class="tab-btn" data-tab="growth">📈 Growth</button>
+            <button class="tab-btn" data-tab="ideas">💡 Ideas</button>
         </div>
 
         <div class="tab-panel" id="panel-metrics">
@@ -728,25 +954,25 @@
         </div>
 
         <!-- ── Inbox Panel ── -->
-        <div class="tab-panel" id="panel-inbox">
-            <div class="panel-box" style="display:flex;flex-direction:column;height:100%;padding-bottom:0">
-                <div class="inbox-wrap">
-                    <div class="panel-title" style="margin-bottom:14px">Dancescapes Unified Inbox</div>
-                    <div class="inbox-toolbar">
-                        <div class="inbox-toolbar-left">
-                            <button class="inbox-filter-btn active" data-filter="all">All</button>
-                            <button class="inbox-filter-btn" data-filter="message">💬 Messages</button>
-                            <button class="inbox-filter-btn" data-filter="comment">🗨️ Comments</button>
-                            <button class="inbox-filter-btn" data-filter="review">⭐ Reviews</button>
-                        </div>
-                        <button class="inbox-refresh-btn" id="inbox-refresh-btn">🔄 Refresh</button>
+        <div class="tab-panel active" id="panel-inbox" style="display:flex;flex-direction:column;height:calc(100vh - var(--header-h) - 220px);min-height:400px;">
+            <div class="inbox-wrap">
+                <div class="inbox-toolbar">
+                    <div class="inbox-toolbar-left">
+                        <button class="inbox-filter-btn active" data-filter="all">All</button>
+                        <button class="inbox-filter-btn" data-filter="message">💬 Messages</button>
+                        <button class="inbox-filter-btn" data-filter="comment">🗨️ Comments</button>
+                        <button class="inbox-filter-btn" data-filter="review">⭐ Reviews</button>
                     </div>
-                    <div class="inbox-layout">
-                        <div class="inbox-conv-list" id="inbox-conv-list">
-                            <div class="inbox-loading"><div class="inbox-spinner"></div> Loading…</div>
-                        </div>
-                        <div class="inbox-thread" id="inbox-thread">
-                            <div class="inbox-no-select">← Select a conversation</div>
+                    <button class="inbox-refresh-btn" id="inbox-refresh-btn">🔄 Refresh</button>
+                </div>
+                <div class="inbox-layout" id="inbox-layout">
+                    <div class="inbox-conv-list" id="inbox-conv-list">
+                        <div class="inbox-loading"><div class="inbox-spinner"></div> Loading…</div>
+                    </div>
+                    <div class="inbox-thread" id="inbox-thread">
+                        <div class="inbox-no-select">
+                            <span class="inbox-no-select-icon">💬</span>
+                            <span class="inbox-no-select-text">Select a conversation to start replying</span>
                         </div>
                     </div>
                 </div>
@@ -1279,10 +1505,17 @@ function renderInboxConvList() {
         el.innerHTML = '<div class="inbox-empty" style="padding:32px 16px;text-align:center"><div class="inbox-empty-icon">📭</div><div>No messages yet.<br><small>Messages sync every 15 minutes via n8n.</small></div></div>';
         return;
     }
-    el.innerHTML = convs.map(c => `
-        <div class="inbox-conv-item${activeConvId === c.conversationId ? ' active' : ''}"
-             onclick="openConversation('${c.conversationId}')">
-            <div class="inbox-conv-avatar">${NET_ICONS[c.network] || '💬'}</div>
+    const lastSeen = parseInt(localStorage.getItem('ds_inbox_last_seen') || '0', 10);
+    el.innerHTML = convs.map(c => {
+        const msgTs = c.timestamp || 0;
+        const isUnread = msgTs > lastSeen;
+        const netCls = (c.network||'').toLowerCase().replace(/[^a-z]/g,'');
+        const initial = (c.userName||'?')[0].toUpperCase();
+        const itemClass = 'inbox-conv-item' + (c.conversationId === activeConvId ? ' active' : '') + (isUnread && c.conversationId !== activeConvId ? ' unread' : '');
+        return `
+        <div class="${itemClass}" onclick="openConversation('${c.conversationId}')">
+            <div class="inbox-conv-avatar net-${netCls}">${initial}</div>
+            <div class="inbox-unread-dot"></div>
             <div class="inbox-conv-meta">
                 <div class="inbox-conv-name">${escHtml(c.userName || 'Unknown')}</div>
                 <div class="inbox-conv-preview">${c.rating ? '⭐'.repeat(c.rating) + ' ' : ''}${escHtml((c.text || '').substring(0, 55))}${(c.text||'').length > 55 ? '…' : ''}</div>
@@ -1291,7 +1524,8 @@ function renderInboxConvList() {
                     ${inboxNetBadge(c.network)}
                 </div>
             </div>
-        </div>`).join('');
+        </div>`;
+    }).join('');
 }
 
 function openConversation(convId) {
@@ -1325,10 +1559,13 @@ function renderInboxThread() {
             <div class="inbox-bubble-time" style="text-align:right">Sent ${inboxRelTime(r.sentAt)}</div>
         </div>`).join('');
 
+    const avatarInitial = (first.userName||'?')[0].toUpperCase();
+    const netClass = (first.network||'').toLowerCase().replace(/[^a-z]/g,'');
     el.innerHTML = `
         <div class="inbox-thread-header">
-            <div class="inbox-thread-header-net">${NET_ICONS[first.network] || '💬'}</div>
-            <div>
+            <button class="inbox-thread-back" onclick="closeMobileThread()" aria-label="Back">‹</button>
+            <div class="inbox-thread-avatar net-${netClass}">${avatarInitial}</div>
+            <div class="inbox-thread-header-info">
                 <div class="inbox-thread-header-name">${escHtml(first.userName || 'Unknown')}</div>
                 <div class="inbox-thread-header-sub">${NET_LABELS[first.network] || first.network} · ${inboxRelTime(first.timestamp)}</div>
             </div>
@@ -1336,15 +1573,19 @@ function renderInboxThread() {
         ${warning ? `<div class="inbox-warning">${warning}</div>` : ''}
         <div class="inbox-messages" id="inbox-messages-scroll">${bubbles}${outboundBubbles}</div>
         <div class="inbox-reply-area">
-            <textarea class="inbox-reply-input" id="inbox-reply-input" placeholder="Type a reply…" rows="1"
+            <textarea class="inbox-reply-input" id="inbox-reply-input" placeholder="Type a reply… (Enter to send, Shift+Enter for new line)" rows="1"
                 onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendInboxReply()}"
-                oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
-            <button class="inbox-reply-send" id="inbox-reply-send" onclick="sendInboxReply()">Send ↗</button>
+                oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"></textarea>
+            <button class="inbox-reply-send" id="inbox-reply-send" onclick="sendInboxReply()" title="Send (Enter)">➤</button>
         </div>`;
 
-    // Scroll to bottom
-    const scroll = document.getElementById('inbox-messages-scroll');
-    if (scroll) scroll.scrollTop = scroll.scrollHeight;
+    // On mobile, slide to thread view when a conversation is selected
+    if (window.innerWidth <= 768) openMobileThread();
+    // Scroll to bottom of messages
+    setTimeout(() => {
+        const msgs = document.getElementById('inbox-messages-scroll');
+        if (msgs) msgs.scrollTop = msgs.scrollHeight;
+    }, 50);
 }
 
 async function sendInboxReply() {
@@ -1357,7 +1598,7 @@ async function sendInboxReply() {
     if (!conv) return;
 
     btn.disabled = true;
-    btn.textContent = 'Sending…';
+    btn.textContent = '…';
 
     try {
         const res = await fetch(INBOX_REPLY_URL, {
@@ -1379,7 +1620,7 @@ async function sendInboxReply() {
     } catch (err) {
         alert('Could not reach reply service. Check your connection.');
     } finally {
-        if (btn) { btn.disabled = false; btn.textContent = 'Send ↗'; }
+        if (btn) { btn.disabled = false; btn.textContent = '➤'; }
     }
 }
 
@@ -1484,6 +1725,21 @@ function initInbox() {
     });
     // Refresh button
     document.getElementById('inbox-refresh-btn')?.addEventListener('click', () => loadInbox(true));
+    // Enter to send (Shift+Enter = newline)
+    document.addEventListener('keydown', (e) => {
+        const input = document.getElementById('inbox-reply-input');
+        if (e.target === input && e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            document.getElementById('inbox-reply-send')?.click();
+        }
+    });
+    // Auto-resize reply textarea
+    document.addEventListener('input', (e) => {
+        if (e.target?.classList.contains('inbox-reply-input')) {
+            e.target.style.height = 'auto';
+            e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+        }
+    });
     // Initial badge poll
     pollInboxBadge();
     // Poll every 2 minutes
@@ -1493,6 +1749,21 @@ function initInbox() {
 /* ═══════════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════════ */
+// Mobile inbox: open thread pane
+function openMobileThread() {
+    document.getElementById('inbox-layout')?.classList.add('thread-open');
+}
+// Mobile inbox: close thread pane (go back to list)
+function closeMobileThread() {
+    document.getElementById('inbox-layout')?.classList.remove('thread-open');
+}
+
+// Calendar widget toggle
+function toggleCalWidget() {
+    const w = document.getElementById('cal-widget');
+    if (w) w.classList.toggle('open');
+}
+
 initHeader();
 renderSidebar();
 renderPlatformCards();
@@ -1500,6 +1771,7 @@ renderCalendar();
 renderMetricsTable();
 renderContentIdeas();
 initInbox();
+loadInbox(); // inbox is the default tab — load immediately
 syncFromApi();
 setInterval(syncFromApi, 5 * 60 * 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) syncFromApi(); });
