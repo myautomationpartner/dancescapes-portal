@@ -1,0 +1,25 @@
+# Cloudflare Pages response headers
+# These ensure the PWA service worker and manifest work correctly.
+
+# Service Worker — must be served with correct content type and allowed scope
+/sw.js
+  Content-Type: application/javascript; charset=utf-8
+  Service-Worker-Allowed: /
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Web App Manifest — must be served as JSON
+/manifest.json
+  Content-Type: application/manifest+json; charset=utf-8
+  Cache-Control: no-cache
+
+# PWA icons — long cache, immutable
+/assets/icons/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Main HTML — never cache (always fresh)
+/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Root (/) — same as index.html
+/
+  Cache-Control: no-cache, no-store, must-revalidate

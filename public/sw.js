@@ -10,7 +10,7 @@
  * Phase 3 (API):  Upgrade to Workbox or background-sync when needed.
  */
 
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const SHELL_CACHE   = `map-shell-${CACHE_VERSION}`;
 const DATA_CACHE    = `map-data-${CACHE_VERSION}`;
 
@@ -18,10 +18,10 @@ const DATA_CACHE    = `map-data-${CACHE_VERSION}`;
 const APP_SHELL = [
   '/',
   '/index.html',
-  '/assets/icon.svg',
-  '/assets/icon.png',
-  // Google Fonts are cross-origin — they cache themselves via their own SW,
-  // but we list them here so the browser knows they're important.
+  '/manifest.json',
+  '/assets/icons/icon-192.webp',
+  '/assets/icons/icon-512.webp',
+  // Google Fonts are cross-origin — they cache themselves via their own SW
   'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap',
 ];
 
