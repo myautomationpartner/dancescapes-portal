@@ -1655,20 +1655,24 @@ if ('serviceWorker' in navigator) {
 
     if (!isIOS || !isSafari || isStandalone || wasDismissed) return;
 
-    const banner = document.getElementById('ios-install-banner');
-    if (!banner) return;
+    // The banner <div> is parsed AFTER this <script> block, so we must
+    // wait for DOMContentLoaded before touching the DOM.
+    window.addEventListener('DOMContentLoaded', function() {
+        const banner = document.getElementById('ios-install-banner');
+        if (!banner) return;
 
-    // Delay slightly so the page has fully painted first
-    setTimeout(() => { banner.style.display = 'block'; }, 1800);
+        // Extra delay so the page has fully painted before the banner slides up
+        setTimeout(() => { banner.style.display = 'block'; }, 1800);
 
-    window.dismissIOSBanner = function() {
-        banner.style.animation = 'none';
-        banner.style.transition = 'opacity 0.2s, transform 0.2s';
-        banner.style.opacity = '0';
-        banner.style.transform = 'translateX(-50%) translateY(16px)';
-        setTimeout(() => { banner.style.display = 'none'; }, 220);
-        localStorage.setItem(DISMISSED_KEY, '1');
-    };
+        window.dismissIOSBanner = function() {
+            banner.style.animation = 'none';
+            banner.style.transition = 'opacity 0.2s, transform 0.2s';
+            banner.style.opacity = '0';
+            banner.style.transform = 'translateX(-50%) translateY(16px)';
+            setTimeout(() => { banner.style.display = 'none'; }, 220);
+            localStorage.setItem(DISMISSED_KEY, '1');
+        };
+    });
 })();
 </script>
 
