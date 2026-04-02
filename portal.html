@@ -1215,7 +1215,7 @@ async function sendInboxReply() {
         const res = await fetch(INBOX_REPLY_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ blogId: INBOX_BLOG_ID, conversationId: activeConvId, text, network: conv.network })
+            body: JSON.stringify({ blogId: INBOX_BLOG_ID, conversationId: activeConvId, text, network: conv.network, type: conv.type ?? 'message' })
         });
         const data = await res.json().catch(() => ({}));
         if (data.ok !== false) {
