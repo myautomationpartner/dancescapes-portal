@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Dancescapes Portal</string>
+    <string name="title_activity_main">Dancescapes Portal</string>
+    <string name="package_name">com.myautomationpartner.dancescapes</string>
+    <string name="custom_url_scheme">com.myautomationpartner.dancescapes</string>
+</resources>
