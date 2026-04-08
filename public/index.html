@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!-- ── Viewport: cover entire screen edge-to-edge on mobile ── -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Dancescapes — Social Media Command Center</title>
+    <title>Social Media Command Center</title>
 
     <!-- ── PWA: Web App Manifest ─────────────────────────────── -->
     <link rel="manifest" href="/manifest.json">
@@ -17,17 +17,17 @@
     <!-- ── PWA: iOS / Safari "Add to Home Screen" ────────────── -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Dancescapes">
+    <meta name="apple-mobile-web-app-title" content="Client Portal" id="meta-ios-title">
     <link rel="apple-touch-icon" href="/assets/icon.png">
     <!-- iOS splash screen meta (add more sizes for full iOS coverage) -->
     <link rel="apple-touch-startup-image" href="/assets/icon.png">
 
     <!-- ── PWA: Android / Chrome ─────────────────────────────── -->
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Dancescapes">
+    <meta name="application-name" content="Client Portal" id="meta-app-name">
 
     <!-- ── SEO & Social ──────────────────────────────────────── -->
-    <meta name="description" content="Dancescapes Performing Arts — Social Media Command Center. Manage metrics, inbox, and content calendar.">
+    <meta name="description" content="Social Media Command Center — Manage metrics, inbox, and content calendar." id="meta-description">
     <meta name="robots" content="noindex, nofollow">
 
     <!-- ── Icons ─────────────────────────────────────────────── -->
@@ -730,6 +730,162 @@
         .inbox-no-select-icon { font-size: 48px; opacity: .2; }
         .inbox-no-select-text { font-size: 13px; color: var(--text-faint); }
 
+        /* ─── Mobile Icon Home Screen ───────────────────────────────
+           Only active at ≤ 680px. Desktop layout is 100% unchanged.
+        ──────────────────────────────────────────────────────────── */
+        .mob-home { display: none; }
+        .mob-section-bar { display: none; }
+
+        @media (max-width: 680px) {
+
+            /* Hide desktop-only elements on mobile home screen */
+            .hero-strip,
+            .platform-cards,
+            .cal-widget,
+            .tab-bar,
+            .api-notice { display: none !important; }
+
+            /* All tab panels hidden until a section is opened */
+            .tab-panel { display: none !important; }
+
+            /* Show mobile home by default */
+            .mob-home { display: block; }
+
+            /* When a section is open: hide home, show back bar + panel */
+            body.mob-in-section .mob-home { display: none; }
+            body.mob-in-section .mob-section-bar { display: flex; }
+            body.mob-in-section .tab-panel.active { display: block !important; }
+            body.mob-in-section .cal-widget { display: block !important; }
+
+            /* ── Compact stats strip ── */
+            .mob-stats {
+                display: flex;
+                background: var(--bg-card);
+                border: 1px solid var(--border-gold);
+                border-radius: 14px;
+                margin-bottom: 18px;
+                overflow: hidden;
+            }
+            .mob-stat {
+                flex: 1;
+                padding: 14px 8px;
+                text-align: center;
+                border-right: 1px solid var(--border);
+            }
+            .mob-stat:last-child { border-right: none; }
+            .mob-stat-val {
+                font-family: 'Playfair Display', serif;
+                font-size: 20px; font-weight: 700;
+                color: var(--gold); line-height: 1;
+            }
+            .mob-stat-lbl {
+                font-size: 9px; color: var(--text-faint);
+                text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px;
+            }
+
+            /* ── 2-column icon tile grid ── */
+            .mob-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 11px;
+                margin-bottom: 24px;
+            }
+            .mob-tile {
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: 18px;
+                padding: 22px 14px 18px;
+                display: flex; flex-direction: column;
+                align-items: center; gap: 8px;
+                cursor: pointer;
+                transition: transform .15s, background .15s, border-color .15s;
+                position: relative;
+                min-height: 116px;
+                text-align: center;
+                font-family: inherit;
+            }
+            .mob-tile:active { transform: scale(0.95); }
+            .mob-tile:hover { border-color: var(--gold-border); background: var(--bg-elevated); }
+            .mob-tile-icon { font-size: 34px; line-height: 1; }
+            .mob-tile-label {
+                font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.2;
+            }
+            .mob-tile-sub { font-size: 10px; color: var(--text-faint); line-height: 1.3; }
+
+            /* Primary tile style */
+            .mob-tile.primary {
+                background: linear-gradient(135deg, rgba(201,168,76,0.14), rgba(201,168,76,0.05));
+                border-color: var(--gold-border);
+                box-shadow: 0 0 20px rgba(201,168,76,0.08);
+            }
+            .mob-tile.primary .mob-tile-label { color: var(--gold); }
+
+            /* Coming-soon tile */
+            .mob-tile.coming-soon { opacity: 0.65; }
+            .mob-tile-badge {
+                position: absolute; top: 10px; right: 10px;
+                background: rgba(251,191,36,0.12);
+                border: 1px solid rgba(251,191,36,0.3);
+                color: #fbbf24;
+                font-size: 9px; font-weight: 700;
+                letter-spacing: 0.08em; text-transform: uppercase;
+                padding: 2px 7px; border-radius: 8px;
+            }
+
+            /* ── Quick links row ── */
+            .mob-links-title {
+                font-size: 10px; font-weight: 700;
+                letter-spacing: 0.14em; text-transform: uppercase;
+                color: var(--text-faint); margin-bottom: 12px;
+            }
+            .mob-links-row {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+            .mob-link-tile {
+                display: flex; flex-direction: column;
+                align-items: center; gap: 6px;
+                padding: 12px 6px;
+                background: var(--bg-card);
+                border: 1px solid var(--border);
+                border-radius: 14px;
+                text-decoration: none;
+                transition: transform .15s, background .15s;
+                cursor: pointer;
+            }
+            .mob-link-tile:active { transform: scale(0.93); background: var(--bg-elevated); }
+            .mob-link-icon { font-size: 22px; line-height: 1; }
+            .mob-link-label {
+                font-size: 10px; color: var(--text-dim);
+                font-weight: 500; line-height: 1.2; text-align: center;
+            }
+
+            /* ── Section back bar ── */
+            .mob-section-bar {
+                align-items: center; gap: 12px;
+                padding: 0 0 16px;
+            }
+            .mob-back-btn {
+                background: var(--gold-dim);
+                border: 1px solid var(--gold-border);
+                color: var(--gold); border-radius: 10px;
+                padding: 8px 14px; font-size: 13px; font-weight: 700;
+                cursor: pointer; font-family: inherit;
+                display: flex; align-items: center; gap: 5px;
+            }
+            .mob-section-title-bar {
+                font-family: 'Playfair Display', serif;
+                font-size: 17px; font-weight: 700; color: var(--gold);
+            }
+
+            /* Section panels fill screen without extra padding */
+            body.mob-in-section .panel-box { padding: 14px; }
+            body.mob-in-section #panel-inbox {
+                height: calc(100vh - var(--header-h) - 120px);
+            }
+        }
+
         /* ── Calendar mini-widget (collapsible) ── */
         .cal-widget {
             background: var(--bg-content);
@@ -771,11 +927,11 @@
         <div class="brand">
             <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">☰ Links</button>
             <img src="https://pub-ba8be99ab92a493c8f41012c737905d5.r2.dev/dancescapes%20logo.jpg"
-                 alt="Dancescapes" class="brand-logo"
+                 alt="Client Logo" class="brand-logo"
                  onerror="this.style.display='none';document.querySelector('.brand-logo-fallback').style.display='flex'">
             <div class="brand-logo-fallback">💃</div>
             <div>
-                <div class="brand-name">Dancescapes</div>
+                <div class="brand-name" id="brand-name">My Portal</div>
                 <div class="brand-sub">Social Media Command Center</div>
             </div>
         </div>
@@ -803,7 +959,7 @@
 <div class="hero-strip">
     <div class="hero-inner">
         <div>
-            <div class="hero-greeting" id="hero-greeting">Welcome back, <span class="brand-accent">Dancescapes!</span></div>
+            <div class="hero-greeting" id="hero-greeting">Welcome back, <span class="brand-accent">Your Studio!</span></div>
             <div class="hero-tagline" id="hero-tagline">Here's your social media snapshot for today.</div>
         </div>
         <div class="hero-totals">
@@ -880,6 +1036,75 @@
 
         <div class="api-notice" id="api-notice">
             ℹ️ &nbsp;Metrics API not reachable — showing locally saved data. Click any follower count to update manually.
+        </div>
+
+        <!-- ── Mobile Section Back Bar (shown when a section is open) ── -->
+        <div class="mob-section-bar" id="mob-section-bar">
+            <button class="mob-back-btn" onclick="closeMobSection()">← Home</button>
+            <span class="mob-section-title" id="mob-section-title">Section</span>
+        </div>
+
+        <!-- ── Mobile Icon Home Screen (≤680px only) ── -->
+        <div class="mob-home" id="mob-home">
+
+            <!-- Compact stats strip -->
+            <div class="mob-stats">
+                <div class="mob-stat">
+                    <span class="mob-stat-val" id="mob-stat-followers">—</span>
+                    <span class="mob-stat-lbl">followers</span>
+                </div>
+                <div class="mob-stat-divider"></div>
+                <div class="mob-stat">
+                    <span class="mob-stat-val" id="mob-stat-platforms">3</span>
+                    <span class="mob-stat-lbl">platforms</span>
+                </div>
+                <div class="mob-stat-divider"></div>
+                <div class="mob-stat">
+                    <span class="mob-stat-val" id="mob-stat-unread">—</span>
+                    <span class="mob-stat-lbl">unread</span>
+                </div>
+            </div>
+
+            <!-- 2×3 icon grid -->
+            <div class="mob-grid">
+
+                <div class="mob-tile coming-soon" onclick="void(0)">
+                    <span class="mob-tile-icon">💬</span>
+                    <span class="mob-tile-label">Inbox</span>
+                    <span class="mob-tile-badge">Setting up</span>
+                </div>
+
+                <div class="mob-tile" onclick="openMobSection('metrics','📊 Metrics')">
+                    <span class="mob-tile-icon">📊</span>
+                    <span class="mob-tile-label">Metrics</span>
+                </div>
+
+                <div class="mob-tile" onclick="openMobSection('growth','📈 Growth')">
+                    <span class="mob-tile-icon">📈</span>
+                    <span class="mob-tile-label">Growth</span>
+                </div>
+
+                <div class="mob-tile" onclick="openMobSection('calendar','📅 Calendar')">
+                    <span class="mob-tile-icon">📅</span>
+                    <span class="mob-tile-label">Calendar</span>
+                </div>
+
+                <div class="mob-tile" onclick="openMobSection('ideas','💡 Ideas')">
+                    <span class="mob-tile-icon">💡</span>
+                    <span class="mob-tile-label">Ideas</span>
+                </div>
+
+                <div class="mob-tile" style="visibility:hidden">
+                    <span class="mob-tile-icon">—</span>
+                    <span class="mob-tile-label">—</span>
+                </div>
+
+            </div>
+
+            <!-- Quick links row (rendered by JS from customLinks) -->
+            <div class="mob-links-label">Quick Links</div>
+            <div class="mob-links-row" id="mob-links-row"></div>
+
         </div>
 
         <div class="platform-cards" id="platform-cards"></div>
@@ -980,7 +1205,7 @@
         </div>
 
         <div class="site-footer">
-            <strong>Dancescapes Performing Arts LLC</strong> · Endicott, NY ·
+            <strong id="footer-name">Your Studio</strong> ·
             Powered by <a href="https://myautomationpartner.com" target="_blank">My Automation Partner</a> ·
             All data saved locally in your browser
         </div>
@@ -1103,7 +1328,8 @@ function initHeader() {
     document.getElementById('header-date').textContent = now.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
     const h = now.getHours();
     const greeting = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
-    document.getElementById('hero-greeting').innerHTML = `${greeting}, <span class="brand-accent">Dancescapes!</span>`;
+    const clientName = CLIENT_CONFIG?.name ?? 'Your Studio';
+    document.getElementById('hero-greeting').innerHTML = `${greeting}, <span class="brand-accent">${clientName}!</span>`;
     const msgs = ["Here's your social media snapshot for today.", "Let's make today's content count. 💃", "Your audience is waiting — let's show up!", "Keep the momentum going!"];
     document.getElementById('hero-tagline').textContent = msgs[now.getDay() % msgs.length];
 }
@@ -1111,6 +1337,47 @@ function updateHeroTotals() {
     const total = ['instagram','tiktok','facebook'].reduce((sum, pid) => sum + (stats[pid]?.followers || 0), 0);
     const el = document.getElementById('total-followers');
     if (el) el.textContent = total > 0 ? total.toLocaleString() : '—';
+    // Mirror to mobile stats strip
+    const mf = document.getElementById('mob-stat-followers');
+    if (mf) mf.textContent = total > 0 ? total.toLocaleString() : '—';
+}
+
+/* ═══════════════════════════════════════════════════════
+   MOBILE ICON HOME NAVIGATION
+═══════════════════════════════════════════════════════ */
+function openMobSection(tab, title) {
+    // Hide all panels first
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('cal-widget').style.display = 'none';
+
+    // Show the requested section
+    if (tab === 'calendar') {
+        document.getElementById('cal-widget').style.display = 'block';
+    } else {
+        const panel = document.getElementById('panel-' + tab);
+        if (panel) panel.classList.add('active');
+    }
+
+    // Update back bar title and enable section mode
+    const titleEl = document.getElementById('mob-section-title');
+    if (titleEl) titleEl.textContent = title;
+    document.body.classList.add('mob-in-section');
+    window.scrollTo(0, 0);
+}
+
+function closeMobSection() {
+    document.body.classList.remove('mob-in-section');
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    window.scrollTo(0, 0);
+}
+
+function renderMobLinks() {
+    const row = document.getElementById('mob-links-row');
+    if (!row) return;
+    row.innerHTML = customLinks.slice(0, 6).map(l => `
+        <a class="mob-link-tile" href="${l.url}" target="_blank" rel="noopener" title="${l.label}">
+            <span class="mob-link-icon">${l.icon}</span>
+        </a>`).join('');
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1433,7 +1700,7 @@ function copyHashtag(el, text) {
 function syncFromApi() {
     const badge = document.getElementById('api-badge'), dot = document.getElementById('api-dot'), lbl = document.getElementById('api-label');
     badge.style.display = 'flex'; dot.className = 'api-dot'; dot.style.background = '#444'; lbl.textContent = 'Syncing…';
-    fetch('https://n8n.myautomationpartner.com/webhook/metrics/dancescapes?t=' + Date.now())
+    fetch(`https://n8n.myautomationpartner.com/webhook/metrics/${getClientSlug()}?t=` + Date.now())
         .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
         .then(data => {
             const map = { instagram: 'instagram', tiktok: 'tiktok', facebook: 'facebook',
@@ -1452,9 +1719,100 @@ function syncFromApi() {
 /* ═══════════════════════════════════════════════════════
    UNIFIED INBOX
 ═══════════════════════════════════════════════════════ */
-const INBOX_BLOG_ID   = '6035446';
+/* ═══════════════════════════════════════════════════════
+   MULTI-TENANT CONFIG
+   Detects subdomain slug → fetches client config from D1
+   via /api/config. All hardcoded brand values replaced.
+═══════════════════════════════════════════════════════ */
+let CLIENT_CONFIG = null;
+
+function getClientSlug() {
+    const host  = window.location.hostname;
+    const parts = host.split('.');
+    // subdomain present and not "www" / "portal" / "localhost"
+    if (parts.length >= 3 && !['www','portal','localhost'].includes(parts[0])) {
+        return parts[0];
+    }
+    // local dev fallback: ?client=slug
+    return new URLSearchParams(window.location.search).get('client') || 'dancescapes';
+}
+
+async function loadClientConfig() {
+    const slug = getClientSlug();
+    try {
+        const res = await fetch(`/api/config?slug=${encodeURIComponent(slug)}`);
+        if (!res.ok) throw new Error(`Config not found for "${slug}"`);
+        CLIENT_CONFIG = await res.json();
+    } catch (err) {
+        console.warn('[Portal] Config fetch failed, using defaults:', err.message);
+        // Fallback so portal still renders on network error
+        CLIENT_CONFIG = {
+            slug:            'dancescapes',
+            name:            'Dancescapes Performing Arts',
+            logoUrl:         'https://pub-ba8be99ab92a493c8f41012c737905d5.r2.dev/dancescapes%20logo.jpg',
+            blogId:          '6035446',
+            metricoolUserId: '4660143',
+            primaryColor:    '#c9a84c',
+            secondaryColor:  '#d4619c',
+            replyWebhook:    'https://n8n.myautomationpartner.com/webhook/inbox-reply',
+        };
+    }
+    applyBranding(CLIENT_CONFIG);
+}
+
+function applyBranding(cfg) {
+    // Page title + meta
+    document.title = `${cfg.name} — Social Media Command Center`;
+    const metaDesc = document.getElementById('meta-description');
+    if (metaDesc) metaDesc.content = `${cfg.name} — Social Media Command Center`;
+    const metaIOS  = document.getElementById('meta-ios-title');
+    if (metaIOS)  metaIOS.content  = cfg.name;
+    const metaApp  = document.getElementById('meta-app-name');
+    if (metaApp)  metaApp.content  = cfg.name;
+
+    // Header logo + brand name
+    const logo = document.querySelector('.brand-logo');
+    if (logo && cfg.logoUrl) { logo.src = cfg.logoUrl; logo.alt = cfg.name; }
+    const brandName = document.querySelector('.brand-name');
+    if (brandName) brandName.textContent = cfg.name;
+
+    // Footer + iOS install banner
+    const footerName = document.getElementById('footer-name');
+    if (footerName) footerName.textContent = cfg.name;
+    const iosBannerTitle = document.getElementById('ios-banner-title');
+    if (iosBannerTitle) iosBannerTitle.textContent = `📲 Install ${cfg.name} Portal`;
+
+    // CSS color variables
+    document.documentElement.style.setProperty('--gold',  cfg.primaryColor  ?? '#c9a84c');
+    document.documentElement.style.setProperty('--rose',  cfg.secondaryColor ?? '#d4619c');
+    // Derived variables that reference --gold
+    document.documentElement.style.setProperty('--gold-light',  lighten(cfg.primaryColor  ?? '#c9a84c', 20));
+    document.documentElement.style.setProperty('--gold-dim',    hexAlpha(cfg.primaryColor  ?? '#c9a84c', 0.12));
+    document.documentElement.style.setProperty('--gold-border', hexAlpha(cfg.primaryColor  ?? '#c9a84c', 0.22));
+}
+
+// Helper: add alpha to a hex color → rgba string
+function hexAlpha(hex, alpha) {
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    return `rgba(${r},${g},${b},${alpha})`;
+}
+// Helper: lighten a hex color by amt (0-255)
+function lighten(hex, amt) {
+    const clamp = n => Math.min(255, n + amt);
+    const r = clamp(parseInt(hex.slice(1,3),16));
+    const g = clamp(parseInt(hex.slice(3,5),16));
+    const b = clamp(parseInt(hex.slice(5,7),16));
+    return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+}
+
+// Convenience getters — used everywhere below instead of hardcoded constants
+function getBlogId()      { return CLIENT_CONFIG?.blogId      ?? '6035446'; }
+function getReplyWebhook(){ return CLIENT_CONFIG?.replyWebhook ?? 'https://n8n.myautomationpartner.com/webhook/inbox-reply'; }
+
 const INBOX_API_URL   = 'https://my-automation-partner.pages.dev/api/inbox';
-const INBOX_REPLY_URL = 'https://n8n.myautomationpartner.com/webhook/inbox-reply';
+// INBOX_BLOG_ID and INBOX_REPLY_URL are now dynamic — use getBlogId() / getReplyWebhook()
 const INBOX_SEEN_KEY  = 'ds_inbox_last_seen'; // localStorage: unix timestamp of last inbox open
 
 const NET_ICONS = { instagram: '📸', facebook: '📘', tiktok: '🎵', googlemybusiness: '🌟', unknown: '💬' };
@@ -1601,10 +1959,10 @@ async function sendInboxReply() {
     btn.textContent = '…';
 
     try {
-        const res = await fetch(INBOX_REPLY_URL, {
+        const res = await fetch(getReplyWebhook(), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ blogId: INBOX_BLOG_ID, conversationId: activeConvId, text, network: conv.network, type: conv.type ?? 'message' })
+            body: JSON.stringify({ blogId: getBlogId(), conversationId: activeConvId, text, network: conv.network, type: conv.type ?? 'message' })
         });
         const data = await res.json().catch(() => ({}));
         if (data.ok !== false) {
@@ -1628,7 +1986,7 @@ async function loadInbox(showSpinner = true) {
     const listEl = document.getElementById('inbox-conv-list');
     if (showSpinner && listEl) listEl.innerHTML = '<div class="inbox-loading"><div class="inbox-spinner"></div> Loading…</div>';
     try {
-        const res = await fetch(`${INBOX_API_URL}?blogId=${INBOX_BLOG_ID}&t=${Date.now()}`);
+        const res = await fetch(`${INBOX_API_URL}?blogId=${getBlogId()}&t=${Date.now()}`);
         if (!res.ok) throw new Error(res.status);
         const data = await res.json();
         inboxMessages = data.messages || [];
@@ -1658,6 +2016,10 @@ function updateInboxBadge(count) {
     if (!badge || !btn) return;
 
     const prev = parseInt(badge.textContent, 10) || 0;
+    // Mirror to mobile stats strip
+    const mobUnread = document.getElementById('mob-stat-unread');
+    if (mobUnread) mobUnread.textContent = count > 0 ? String(count) : '0';
+
     if (count > 0) {
         badge.textContent = count > 99 ? '99+' : String(count);
         badge.classList.add('visible');
@@ -1696,7 +2058,7 @@ function openInboxTab() {
 /* Background badge poll — runs every 2 minutes without opening the inbox */
 async function pollInboxBadge() {
     try {
-        const res = await fetch(`${INBOX_API_URL}?blogId=${INBOX_BLOG_ID}&t=${Date.now()}`);
+        const res = await fetch(`${INBOX_API_URL}?blogId=${getBlogId()}&t=${Date.now()}`);
         if (!res.ok) return;
         const data = await res.json();
         const msgs = data.messages || [];
@@ -1764,17 +2126,22 @@ function toggleCalWidget() {
     if (w) w.classList.toggle('open');
 }
 
-initHeader();
-renderSidebar();
-renderPlatformCards();
-renderCalendar();
-renderMetricsTable();
-renderContentIdeas();
-initInbox();
-loadInbox(); // inbox is the default tab — load immediately
-syncFromApi();
-setInterval(syncFromApi, 5 * 60 * 1000);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) syncFromApi(); });
+// ── Multi-tenant bootstrap: fetch client config first, then render ──
+(async () => {
+    await loadClientConfig();   // sets CLIENT_CONFIG + applies branding
+    initHeader();
+    renderSidebar();
+    renderMobLinks();
+    renderPlatformCards();
+    renderCalendar();
+    renderMetricsTable();
+    renderContentIdeas();
+    initInbox();
+    loadInbox();                // uses getBlogId() — safe now that config is loaded
+    syncFromApi();
+    setInterval(syncFromApi, 5 * 60 * 1000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) syncFromApi(); });
+})();
 
 /* ═══════════════════════════════════════════════════════
    CAPACITOR MOBILE PLUGINS
@@ -1951,7 +2318,7 @@ if ('serviceWorker' in navigator) {
 <!-- iOS "Add to Home Screen" install guide tooltip -->
 <div id="ios-install-banner" role="dialog" aria-label="Install app guide">
     <div class="ios-banner-header">
-        <span class="ios-banner-title">📲 Install Dancescapes Portal</span>
+        <span class="ios-banner-title" id="ios-banner-title">📲 Install Portal</span>
         <button class="ios-banner-close" onclick="dismissIOSBanner()" aria-label="Dismiss">✕</button>
     </div>
     <ol class="ios-banner-steps">
