@@ -1031,24 +1031,6 @@
         <!-- ── Mobile Icon Home Screen (≤680px only) ── -->
         <div class="mob-home" id="mob-home">
 
-            <!-- Compact stats strip -->
-            <div class="mob-stats">
-                <div class="mob-stat">
-                    <span class="mob-stat-val" id="mob-stat-followers">—</span>
-                    <span class="mob-stat-lbl">followers</span>
-                </div>
-                <div class="mob-stat-divider"></div>
-                <div class="mob-stat">
-                    <span class="mob-stat-val" id="mob-stat-platforms">3</span>
-                    <span class="mob-stat-lbl">platforms</span>
-                </div>
-                <div class="mob-stat-divider"></div>
-                <div class="mob-stat">
-                    <span class="mob-stat-val" id="mob-stat-unread">—</span>
-                    <span class="mob-stat-lbl">unread</span>
-                </div>
-            </div>
-
             <!-- 2×3 icon grid -->
             <div class="mob-grid">
 
@@ -1078,9 +1060,9 @@
                     <span class="mob-tile-label">Ideas</span>
                 </div>
 
-                <div class="mob-tile" style="visibility:hidden">
-                    <span class="mob-tile-icon">—</span>
-                    <span class="mob-tile-label">—</span>
+                <div class="mob-tile" onclick="openCustomTileModal()" style="border: 2px dashed rgba(201,168,76,0.3); cursor: pointer;">
+                    <span class="mob-tile-icon">➕</span>
+                    <span class="mob-tile-label">Custom</span>
                 </div>
 
             </div>
@@ -1361,6 +1343,23 @@ function renderMobLinks() {
         <a class="mob-link-tile" href="${l.url}" target="_blank" rel="noopener" title="${l.label}">
             <span class="mob-link-icon">${l.icon}</span>
         </a>`).join('');
+}
+
+function openCustomTileModal() {
+    const name = prompt('What would you like to name this tile?', 'My Link');
+    if (!name) return;
+    const icon = prompt('Enter an emoji icon (e.g., 🎯, 📱, 🚀)', '⭐');
+    if (!icon) return;
+    const url = prompt('Enter the URL (https://...)', '');
+    if (!url) return;
+
+    // Add to customLinks (will save in sidebar form too)
+    const id = 'custom_tile_' + Date.now();
+    customLinks.push({ id, icon, label: name, url, section: 'Custom Tiles', desc: '' });
+    saveState('ds_links', customLinks);
+
+    // Optionally open it or just close modal
+    alert('✓ Tile added! Refresh the page to see it.');
 }
 
 /* ═══════════════════════════════════════════════════════
