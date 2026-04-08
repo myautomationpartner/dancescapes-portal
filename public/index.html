@@ -936,11 +936,6 @@
             </div>
         </div>
         <div class="header-right">
-            <button class="header-inbox-btn" id="header-inbox-btn" onclick="openInboxTab()" title="Open Inbox">
-                <span>💬</span>
-                <span id="header-inbox-label">Unified Inbox</span>
-                <span class="inbox-badge" id="inbox-badge">0</span>
-            </button>
             <!-- PWA Install Banner — hidden until browser fires beforeinstallprompt -->
             <button id="pwa-install-banner" onclick="triggerPWAInstall()" title="Install as App"
                 style="display:none; align-items:center; gap:6px; background:linear-gradient(135deg,rgba(201,168,76,0.18),rgba(201,168,76,0.08)); border:1px solid rgba(201,168,76,0.35); border-radius:20px; color:var(--gold); font-size:11px; font-weight:600; padding:5px 12px; cursor:pointer; letter-spacing:0.04em;">
@@ -961,17 +956,6 @@
         <div>
             <div class="hero-greeting" id="hero-greeting">Welcome back, <span class="brand-accent">Your Studio!</span></div>
             <div class="hero-tagline" id="hero-tagline">Here's your social media snapshot for today.</div>
-        </div>
-        <div class="hero-totals">
-            <div>
-                <div class="hero-stat-val" id="total-followers">—</div>
-                <div class="hero-stat-lbl">Total Followers</div>
-            </div>
-            <div class="hero-divider"></div>
-            <div>
-                <div class="hero-stat-val accent">3</div>
-                <div class="hero-stat-lbl">Active Platforms</div>
-            </div>
         </div>
     </div>
 </div>
@@ -1130,8 +1114,7 @@
         </div>
 
         <div class="tab-bar">
-            <button class="tab-btn active" data-tab="inbox">💬 Inbox</button>
-            <button class="tab-btn" data-tab="metrics">📊 Metrics</button>
+            <button class="tab-btn active" data-tab="metrics">📊 Metrics</button>
             <button class="tab-btn" data-tab="growth">📈 Growth</button>
             <button class="tab-btn" data-tab="ideas">💡 Ideas</button>
         </div>
