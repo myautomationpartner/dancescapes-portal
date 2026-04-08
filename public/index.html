@@ -939,7 +939,8 @@
             <!-- PWA Install Banner — hidden until browser fires beforeinstallprompt -->
             <button id="pwa-install-banner" onclick="triggerPWAInstall()" title="Install as App"
                 style="display:none; align-items:center; gap:6px; background:linear-gradient(135deg,rgba(201,168,76,0.18),rgba(201,168,76,0.08)); border:1px solid rgba(201,168,76,0.35); border-radius:20px; color:var(--gold); font-size:11px; font-weight:600; padding:5px 12px; cursor:pointer; letter-spacing:0.04em;">
-                📲 <span>Install App</span>
+                <img id="pwa-banner-logo" src="" alt="logo" style="width:16px; height:16px; border-radius:4px;">
+                <span>Install App</span>
             </button>
             <div class="api-badge" id="api-badge" style="display:none">
                 <div class="api-dot" id="api-dot"></div>
@@ -1757,6 +1758,10 @@ function applyBranding(cfg) {
     if (logo && cfg.logoUrl) { logo.src = cfg.logoUrl; logo.alt = cfg.name; }
     const brandName = document.querySelector('.brand-name');
     if (brandName) brandName.textContent = cfg.name;
+
+    // PWA install banner logo
+    const pwaBannerLogo = document.getElementById('pwa-banner-logo');
+    if (pwaBannerLogo && cfg.logoUrl) { pwaBannerLogo.src = cfg.logoUrl; }
 
     // Footer + iOS install banner
     const footerName = document.getElementById('footer-name');
